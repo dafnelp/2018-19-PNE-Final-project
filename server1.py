@@ -31,7 +31,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
         # "/listSpecies" or "/chromosomeLength" because they have parameters such as the limit
         # or the chromo name that will afect the functions, the information should be shown
         # according this parameters
-        if resource == "/listSpecies":
+        if resource == "/listSpecies" and "limit" in self.path:
             # Number of species to show
             limit = comp_request[1][6:]
 
@@ -93,28 +93,36 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 # Stablish a counter to show only the species that are selected in the limit input
                 # If this counter is equal to the limit the for loop will break and be only able to show
                 # the species in the counter until that moment
-                counter = 0
-                for i in specie_db:
+                if "limit" in self.path:
+                    counter = 0
+                    for i in specie_db:
 
-                    species = species + i["display_name"]  # This is the key used for the name of the specie
-                    species = species + "<br>"  # This will allow us to separate by lines the species in the HTML
-                    counter += 1
-                    # Only show the species selected
-                    if str(counter) == limit:
-                        break
-                    # The program will show the maximum number of species that are in the data base
-                    else:
-                        continue
+                        species = species + i["display_name"]  # This is the key used for the name of the specie
+                        species = species + "<br>"  # This will allow us to separate by lines the species in the HTML
+                        final_selec = str(counter) + "." + species
+                        counter += 1
+                        # Only show the species selected
+                        if str(counter) == limit:
+                            break
+                        # The program will show the maximum number of species that are in the data base
+                        else:
+                            continue
 
-                # --- RETURN --- NAME OF THE SPECIES
-                return species
+                    # --- RETURN --- NAME OF THE SPECIES
+                    return final_selec
+                else:
+                    for i in specie_db:
+
+                        species = species + i["display_name"]  # This is the key used for the name of the specie
+                        species = species + "<br>"  # This will allow us to separate by lines the species in the HTML
+                    # --- RETURN --- NAME OF THE SPECIES
+                    return species
 
             if "/info/assembly/" in ENDPOINT:
                 # With this endpoint, we have to return different information
                 # depending the request of the client
 
                 if resource == "/karyotype":
-
                     # This is the key used for the name (usually a number)
                     # of the chromosomes of the specie
                     chromosomes = species["karyotype"]
@@ -242,19 +250,52 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
         # Open the page with the message according the request
         elif resource == '/listSpecies':
-            # Number of species to show
-            limit = comp_request[1][6:]
+            if "limit" in self.path:
+                # Number of species to show
+                limit = comp_request[1][6:]
 
-            # Now we are going to focus in the maximum number of species in the data base
-            # In the case that the limit is out of range or the number
-            # is not valid (negative or 0) there will be an error page
-            # If not the maximum number of species will be shown
+                # Now we are going to focus in the maximum number of species in the data base
+                # In the case that the limit is out of range or the number
+                # is not valid (negative or 0) there will be an error page
+                # If not the maximum number of species will be shown
 
-            # Stablish the connection with the data base and
-            # return the info about the species
-            list_species = connection("/info/species")
+                # Stablish the connection with the data base and
+                # return the info about the species
+                list_species = connection("/info/species")
 
-            if limit == "" or int(limit) <= len(list_species) and limit > "0":
+                if limit == "" or int(limit) <= len(list_species) and limit > "0":
+                    # Open the HTML file in a write mode to write the information
+                    # of the page, including the species
+                    f = open("listSpecies.html", "w")
+
+                    f.write("""<!DOCTYPE html>
+                    <html lang="en" dir="ltr">
+                      <head>
+                        <meta charset="utf-8">
+                        <title>LIST OF THE SPECIES</title>
+                      </head>
+                      <body style="background-color: lightsalmon;">
+                        <h1 style="color:midnight;">LIST OF THE SPECIES</h1>
+                         <h2> This is the list of the species: </h2> 
+                         <br>
+                         {} 
+                         <br>
+                         <a href="/"> Back to the main page </a>
+                      </body>
+                    </html>
+                    """.format(list_species))
+
+                    # Close the file
+                    f.close()
+
+                    # Calling the function to open another page
+                    process_info("listSpecies.html")
+
+                elif limit == "0" or int(limit) > len(list_species) or limit < "0":
+                    # The limit selected is out of the range
+                    process_error("error-limit.html")
+            else:
+                list_species = connection("/info/species")
                 # Open the HTML file in a write mode to write the information
                 # of the page, including the species
                 f = open("listSpecies.html", "w")
@@ -271,6 +312,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                      <br>
                      {} 
                      <br>
+                     <a href="/"> Back to the main page </a>
                   </body>
                 </html>
                 """.format(list_species))
@@ -280,10 +322,6 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
                 # Calling the function to open another page
                 process_info("listSpecies.html")
-
-            elif limit == "0" or int(limit) > len(list_species) or limit < "0":
-                # The limit selected is out of the range
-                process_error("error-limit.html")
 
         elif resource == "/karyotype":
             # Specie introduced by the client
@@ -297,32 +335,37 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             # return the info about the karyotype
             try:
                 karyotype_specie = connection("/info/assembly/" + specie)  # This endpoint needs a parameter (specie)
-                karyotype_specie = str(karyotype_specie)
 
-                # Open the HTML file in a write mode to write the information
-                # of the page, including the karyotype information
-                f = open("karyotype.html", "w")
+                if karyotype_specie == []:
+                    print(karyotype_specie)
+                    process_error("error-key.html")
+                else:
+                    # Open the HTML file in a write mode to write the information
+                    # of the page, including the karyotype information
+                    f = open("karyotype.html", "w")
 
-                f.write("""<!DOCTYPE html>
-                <html lang="en" dir="ltr">
-                  <head>
-                    <meta charset="utf-8">
-                    <title>KARYOTYPE INFORMATION</title>
-                  </head>
-                  <body style="background-color: lightsalmon;">
-                    <h1 style="color:midnight;">KARYOTYPE INFORMATION</h1>
-                     <br> The chromosomes of the specie are: <br>
-                     {}
-                     <br>
-                  </body>
-                </html>
-                """.format(karyotype_specie))
+                    f.write("""<!DOCTYPE html>
+                    <html lang="en" dir="ltr">
+                      <head>
+                        <meta charset="utf-8">
+                        <title>KARYOTYPE INFORMATION</title>
+                      </head>
+                      <body style="background-color: lightsalmon;">
+                        <h1 style="color:midnight;">KARYOTYPE INFORMATION</h1>
+                         <br> The chromosomes of the specie are: <br>
+                         {}
+                         <br>
+                         <a href="/"> Back to the main page </a>
+                      </body>
+                    </html>
+                    """.format(karyotype_specie))
 
-                # Close the file
-                f.close()
+                    # Close the file
+                    f.close()
 
-                # Calling the function to open another page
-                process_info("karyotype.html")
+                    # Calling the function to open another page
+                    process_info("karyotype.html")
+
 
             # In case that the specie does not exist in the data base
             except KeyError:
@@ -363,6 +406,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                          <br> The length of the introduced chromosome is: <br>
                          {}
                          <br>
+                         <a href="/"> Back to the main page </a>
                       </body>
                     </html>
                     """.format(chromosome_len))
@@ -403,6 +447,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                      <br> The sequence of the gen is: <br>
                      {}
                      <br>
+                     <a href="/"> Back to the main page </a>
                   </body>
                 </html>
                 """.format(sequence))
@@ -441,6 +486,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                   <body style="background-color: lightsalmon;">
                     <h1 style="color:midnight;">GENE INFORMATION</h1>
                      <br> {} <br>
+                     <a href="/"> Back to the main page </a>
                   </body>
                 </html>
                 """.format(info_gen))
@@ -455,7 +501,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             except KeyError:
                 process_error("error-key.html")
 
-        elif resource == "/geneCal":
+        elif resource == "/geneCalc":
             # Generic name introduced by the client
             gene = comp_request[1][5:]
             gene = gene.upper()
@@ -492,6 +538,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                      <br> The percentage of C bases is: {} <br>
                      <br> The percentage of T bases is: {} <br>
                      <br> The percentage of G bases is: {} <br>
+                     <a href="/"> Back to the main page </a>
                   </body>
                 </html>
                 """.format(seq_len, perc_a, perc_c, perc_t, perc_g))
@@ -544,6 +591,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                       <body style="background-color: lightsalmon;">
                         <h1 style="color:midnight;">GENE NAMES</h1>
                          <br> {} <br>
+                         <a href="/"> Back to the main page </a>
                       </body>
                     </html>
                     """.format(genes_id))
