@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>MAIN PAGE</title>
+  </head>
+  <body style="background-color:silver;">
+    <h1 style="color:black;">INFORMATION ABOUT SPECIES</h1>
+      <form action="listSpecies" method="get">
+        <h2 style="color:white;">LIST SPECIES </h2>
+        <p>Introduce a limit parameter for the list of species (optional)</p>
+        <p> Limit parameter:  <input type="number" name="limit"></p>
+        <p><button type="submit">Send</button></p>
+        <br><br>
+      </form>
+
+      <form action="karyotype" method="get">
+        <h2 style="color:white;">KARYOTYPE INFORMATION </h2>
+        <p>Introduce a specie to know the information about the karyotype</p>
+        <p> Specie: <input type="text" name="specie"></p>
+        <p><button type="submit">Send</button></p>
+        <br><br>
+      </form>
+
+      <form action="chromosomeLength" method="get">
+        <h2 style="color:white;">CHROMOSOME INFORMATION </h2>
+        <p>Introduce a specie to know the information about the chromosomes</p>
+        <p> Specie: <input type="text" name="specie"></p>
+        <p>Introduce the number of one chromosome to know the length</p>
+        <p> Number: <input type="text" name="chromo"></p>
+        <p><button type="submit">Send</button></p>
+        <br><br>
+      </form>
+
+      <form action="geneSeq" method="get">
+        <h2 style="color:white;">GEN SEQUENCE </h2>
+        <p>Introduce a gen to know the information about the sequences</p>
+        <p> Gen: <input type="text" name="gene"></p>
+        <p><button type="submit">Send</button></p>
+        <br><br>
+      </form>
+
+      <form action="geneInfo" method="get">
+        <h2 style="color:white;">GEN INFORMATION </h2>
+        <p>Introduce a gen to know the information about it</p>
+        <p> Gene: <input type="text" name="gene"></p>
+        <p><button type="submit">Send</button></p>
+        <br><br>
+      </form>
+
+      <form action="geneCal" method="get">
+        <h2 style="color:white;">GEN CALCULATIONS </h2>
+        <p>Introduce a gen to perform the calculations about it</p>
+        <p> Gene: <input type="text" name="gene"></p>
+        <p><button type="submit">Send</button></p>
+        <br><br>
+      </form>
+
+      <form action="geneList" method="get">
+        <h2 style="color:white;">NAMES OF THE GENES</h2>
+        <p>Introduce the number of one chromosome to know the names of the genes in the chromosome</p>
+        <p> Chromosome: <input type="text" name="chromo"></p>
+        <p>Introduce the start of the chromosome you want to search for</p>
+        <p> Start: <input type="number" name="start"></p>
+        <p>Introduce the end of the chromosome you want to search for</p>
+        <p> End: <input type="number" name="end"></p>
+        <p><button type="submit">Send</button></p>
+        <br><br>
+      </form>
+
+  </body>
