@@ -29,7 +29,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
         # Processing the other part of the request message, in the case that the resource is
         # "/listSpecies" or "/chromosomeLength" because they have parameters such as the limit
-        # or the chromo name that will afect the functions, the information should be shown
+        # or the chromo name that will affect the functions, the information should be shown
         # according this parameters
         if resource == "/listSpecies" and "limit" in self.path:
             # Number of species to show
@@ -84,8 +84,6 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
                 # Species in the data base
                 specie_db = species["species"]
-                # Storing the species as a string
-                species = ""
 
                 # Iterate over the list of the information about the species
                 # We will only need the name of the specie
@@ -94,27 +92,40 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 # If this counter is equal to the limit the for loop will break and be only able to show
                 # the species in the counter until that moment
                 if "limit" in self.path:
+                    # Storing the species as a list
+                    species = []
+                    # Counter for the species to show
                     counter = 0
                     for i in specie_db:
+                        species.append(i['name'])
 
-                        species = species + i["display_name"]  # This is the key used for the name of the specie
-                        species = species + "<br>"  # This will allow us to separate by lines the species in the HTML
-                        final_selec = str(counter) + "." + species
+                        # This is the key used for the name of the specie
+
                         counter += 1
+
                         # Only show the species selected
-                        if str(counter) == limit:
+                        if str(counter) == str(limit):
                             break
+
                         # The program will show the maximum number of species that are in the data base
                         else:
                             continue
 
                     # --- RETURN --- NAME OF THE SPECIES
-                    return final_selec
-                else:
-                    for i in specie_db:
+                    return species
 
-                        species = species + i["display_name"]  # This is the key used for the name of the specie
-                        species = species + "<br>"  # This will allow us to separate by lines the species in the HTML
+                else:
+                    # Storing the species as a list
+                    species = []
+                    # Counter for the species to show
+                    counter = 0
+                    for i in specie_db:
+                        species.append(i['name'])
+
+                        # This is the key used for the name of the specie
+
+                        counter += 1
+
                     # --- RETURN --- NAME OF THE SPECIES
                     return species
 
@@ -172,25 +183,22 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 length_gene = species["end"] - species["start"]
 
                 # line breaks in the HTML are included
-                info = """ID of the gen: {} <br> Position of the gen:{} <br> Start: {} <br> 
-                End: {} <br> Length: {}""".format(id, chromo_part, start, end, length_gene)
+                info = [start, end, id, chromo_part, length_gene]
                 # ---- RETURN --- INFORMATION ABOUT THE GENE
                 return info
 
             if "overlap/region/human/" in ENDPOINT:
-                gene_id = ''
-                gene_name = ''
-                info = ''
+                gene_id = []
+                gene_name = []
+
                 for i in range(len(species)):
                     # Gene stable identifier
-                    gene_id = gene_id + species[i]["gene_id"]
-                    gene_id = gene_id + "\t"
-                    # Symbol of the gene (generic name)
-                    gene_name = gene_name + species[i]["external_name"]
-                    gene_name = gene_name + "\t"
-                    info = """The gene stable identifier is (or are) : {}.""".format(gene_id) + "\n" + """The 
-                    generic name of the gene is (or are): {}""".format(gene_name)
+                    gene_id.append(species[i]["gene_id"])
 
+                    # Symbol of the gene (generic name)
+                    gene_name.append(species[i]["external_name"])
+
+                info = [gene_id, gene_name]
                 # ---- RETURN --- NAMES OF THE GENE
                 return info
 
@@ -242,6 +250,23 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
             return
 
+        def process_json(content):
+            # Generating the response message
+            self.send_response(200)  # --- status line - everything Ok
+
+            # Define the content-type header:
+            # In our case text/html (should open an HTML file)
+            self.send_header('Content-Type', 'application/json')
+            self.send_header('Content-Length', len(str.encode(content)))
+
+            # The header is finished
+            self.end_headers()
+
+            # Send the response message
+            self.wfile.write(str.encode(content))
+
+            return
+
         # PROCESSING THE DIFFERENT REQUEST OF THE CLIENT
 
         # Open the main page
@@ -250,20 +275,91 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
         # Open the page with the message according the request
         elif resource == '/listSpecies':
-            if "limit" in self.path:
-                # Number of species to show
-                limit = comp_request[1][6:]
 
-                # Now we are going to focus in the maximum number of species in the data base
-                # In the case that the limit is out of range or the number
-                # is not valid (negative or 0) there will be an error page
-                # If not the maximum number of species will be shown
+            if "json=1" in self.path:
 
-                # Stablish the connection with the data base and
-                # return the info about the species
-                list_species = connection("/info/species")
+                if "limit" in self.path:
+                    req = comp_request[1].split('&')
+                    # Number of species to show
+                    limit = req[0][6:]
+                    # List of the names of the species
+                    names_species = connection("/info/species")
 
-                if limit == "" or int(limit) <= len(list_species) and limit > "0":
+                    if limit == "" or int(limit) <= len(names_species) and limit > "0":
+                        process_json(json.dumps(names_species))
+
+                    elif limit == "0" or int(limit) > len(names_species) or limit < "0":
+                        # The limit selected is out of the range
+                        process_error("error-limit.html")
+                else:
+                    # List of the names of the species
+                    names_species = connection("/info/species")
+
+                    process_json(json.dumps(names_species))
+
+            else:
+                if "limit" in self.path:
+                    req = comp_request[1].split('&')
+                    # Number of species to show
+                    limit = req[0][6:]
+
+                    # Now we are going to focus in the maximum number of species in the data base
+                    # In the case that the limit is out of range or the number
+                    # is not valid (negative or 0) there will be an error page
+                    # If not the maximum number of species will be shown
+
+                    # Establish the connection with the data base and
+                    # return the info about the species
+                    list_species = connection("/info/species")
+                    names_species = ""
+                    for i in list_species:
+                        i = i.replace("_", " ")
+
+                        names_species = names_species + i
+
+                        names_species = names_species + "<br>"
+
+                    if limit == "" or int(limit) <= len(list_species) and limit > "0":
+                        # Open the HTML file in a write mode to write the information
+                        # of the page, including the species
+                        f = open("listSpecies.html", "w")
+
+                        f.write("""<!DOCTYPE html>
+                        <html lang="en" dir="ltr">
+                          <head>
+                            <meta charset="utf-8">
+                            <title>LIST OF THE SPECIES</title>
+                          </head>
+                          <body style="background-color: lightsalmon;">
+                            <h1 style="color:midnight;">LIST OF THE SPECIES</h1>
+                             <h2> This is the list of the species: </h2> 
+                             <br>
+                             {} 
+                             <br>
+                             <a href="/"> Back to the main page </a>
+                          </body>
+                        </html>
+                        """.format(names_species))
+
+                        # Close the file
+                        f.close()
+
+                        # Calling the function to open another page
+                        process_info("listSpecies.html")
+
+                    elif limit == "0" or int(limit) > len(list_species) or limit < "0":
+                        # The limit selected is out of the range
+                        process_error("error-limit.html")
+                else:
+                    list_species = connection("/info/species")
+
+                    names_species = ""
+                    for i in list_species:
+                        i = i.replace("_", " ")
+
+                        names_species = names_species + i
+
+                        names_species = names_species + "<br>"
                     # Open the HTML file in a write mode to write the information
                     # of the page, including the species
                     f = open("listSpecies.html", "w")
@@ -283,7 +379,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                          <a href="/"> Back to the main page </a>
                       </body>
                     </html>
-                    """.format(list_species))
+                    """.format(names_species))
 
                     # Close the file
                     f.close()
@@ -291,224 +387,248 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                     # Calling the function to open another page
                     process_info("listSpecies.html")
 
-                elif limit == "0" or int(limit) > len(list_species) or limit < "0":
-                    # The limit selected is out of the range
-                    process_error("error-limit.html")
-            else:
-                list_species = connection("/info/species")
-                # Open the HTML file in a write mode to write the information
-                # of the page, including the species
-                f = open("listSpecies.html", "w")
-
-                f.write("""<!DOCTYPE html>
-                <html lang="en" dir="ltr">
-                  <head>
-                    <meta charset="utf-8">
-                    <title>LIST OF THE SPECIES</title>
-                  </head>
-                  <body style="background-color: lightsalmon;">
-                    <h1 style="color:midnight;">LIST OF THE SPECIES</h1>
-                     <h2> This is the list of the species: </h2> 
-                     <br>
-                     {} 
-                     <br>
-                     <a href="/"> Back to the main page </a>
-                  </body>
-                </html>
-                """.format(list_species))
-
-                # Close the file
-                f.close()
-
-                # Calling the function to open another page
-                process_info("listSpecies.html")
-
         elif resource == "/karyotype":
-            # Specie introduced by the client
-            specie = comp_request[1][7:]
+            if "json=1" in self.path:
+                req = comp_request[1].split('&')
+                # Specie introduced by the client
+                specie = req[0][7:]
+                # Replace the + sign when the specie has two names by _
+                # that is the way that appears in ensembl data base
+                #specie = specie.replace("+", "_").lower()
+                karyotype_specie = connection("/info/assembly/" + specie)
 
-            # Replace the + sign when the specie has two names by _
-            # that is the way that appears in ensembl data base
-            specie = specie.replace("+", "_").lower()
+                process_json(json.dumps(karyotype_specie))
 
-            # Stablish the connection with the data base and
-            # return the info about the karyotype
-            try:
-                karyotype_specie = connection("/info/assembly/" + specie)  # This endpoint needs a parameter (specie)
+            else:
+                # Specie introduced by the client
+                specie = comp_request[1][7:]
 
-                if karyotype_specie == []:
-                    print(karyotype_specie)
+                # Replace the + sign when the specie has two names by _
+                # that is the way that appears in ensembl data base
+                specie = specie.replace("+", "_").lower()
+
+                # Stablish the connection with the data base and
+                # return the info about the karyotype
+                try:
+                    karyotype_specie = connection("/info/assembly/" + specie)  # This endpoint needs a parameter (specie)
+
+                    if karyotype_specie == []:
+                        print(karyotype_specie)
+                        process_error("error-key.html")
+                    else:
+                        # Open the HTML file in a write mode to write the information
+                        # of the page, including the karyotype information
+                        f = open("karyotype.html", "w")
+
+                        f.write("""<!DOCTYPE html>
+                        <html lang="en" dir="ltr">
+                          <head>
+                            <meta charset="utf-8">
+                            <title>KARYOTYPE INFORMATION</title>
+                          </head>
+                          <body style="background-color: lightsalmon;">
+                            <h1 style="color:midnight;">KARYOTYPE INFORMATION</h1>
+                             <br> The chromosomes of the specie are: <br>
+                             {}
+                             <br>
+                             <a href="/"> Back to the main page </a>
+                          </body>
+                        </html>
+                        """.format(karyotype_specie))
+
+                        # Close the file
+                        f.close()
+
+                        # Calling the function to open another page
+                        process_info("karyotype.html")
+
+
+                # In case that the specie does not exist in the data base
+                except KeyError:
                     process_error("error-key.html")
-                else:
-                    # Open the HTML file in a write mode to write the information
-                    # of the page, including the karyotype information
-                    f = open("karyotype.html", "w")
-
-                    f.write("""<!DOCTYPE html>
-                    <html lang="en" dir="ltr">
-                      <head>
-                        <meta charset="utf-8">
-                        <title>KARYOTYPE INFORMATION</title>
-                      </head>
-                      <body style="background-color: lightsalmon;">
-                        <h1 style="color:midnight;">KARYOTYPE INFORMATION</h1>
-                         <br> The chromosomes of the specie are: <br>
-                         {}
-                         <br>
-                         <a href="/"> Back to the main page </a>
-                      </body>
-                    </html>
-                    """.format(karyotype_specie))
-
-                    # Close the file
-                    f.close()
-
-                    # Calling the function to open another page
-                    process_info("karyotype.html")
-
-
-            # In case that the specie does not exist in the data base
-            except KeyError:
-                process_error("error-key.html")
 
         elif resource == "/chromosomeLength":
-            req = comp_request[1].split('&')
-            # Specie introduced by the client
-            specie = req[0][7:]
+            if "json=1" in self.path:
+                req = comp_request[1].split('&')
+                # Specie introduced by the client
+                specie = req[0][7:]
+                # Replace the + sign when the specie has two names by _
+                # that is the way that appears in ensembl data base
+                #specie = specie.replace("+", "_").lower()
+                karyotype_specie = connection("/info/assembly/" + specie)
 
-            # Replace the + sign when the specie has two names by _
-            # that is the way that appears in ensembl data base
-            specie = specie.replace("+", "_").lower()
+                process_json(json.dumps(karyotype_specie))
+            else:
+                req = comp_request[1].split('&')
+                # Specie introduced by the client
+                specie = req[0][7:]
 
-            # Stablish the connection with the data base and
-            # return the info about the chromosomes
-            try:
-                chromosome_len = connection("/info/assembly/" + specie)  # This endpoint needs a parameter (the specie)
+                # Replace the + sign when the specie has two names by _
+                # that is the way that appears in ensembl data base
+                specie = specie.replace("+", "_").lower()
 
-                # In the case that the function does not return any info about the length
-                # means that the chromo name is not valid so an error page will be opened
-                if chromosome_len == "":
-                    process_error("error-limit.html")
+                # Stablish the connection with the data base and
+                # return the info about the chromosomes
+                try:
+                    chromosome_len = connection("/info/assembly/" + specie)  # This endpoint needs a parameter (the specie)
 
-                else:
-                    # Open the HTML file in a write mode to write the information
-                    # of the page, including the chromosome information
-                    f = open("chromosome.html", "w")
+                    # In the case that the function does not return any info about the length
+                    # means that the chromo name is not valid so an error page will be opened
+                    if chromosome_len == "":
+                        process_error("error-limit.html")
 
-                    f.write("""<!DOCTYPE html>
-                    <html lang="en" dir="ltr">
-                      <head>
-                        <meta charset="utf-8">
-                        <title>CHROMOSOMES INFORMATION</title>
-                      </head>
-                      <body style="background-color: lightsalmon;">
-                        <h1 style="color:midnight;">CHROMOSOMES INFORMATION</h1>
-                         <br> The length of the introduced chromosome is: <br>
-                         {}
-                         <br>
-                         <a href="/"> Back to the main page </a>
-                      </body>
-                    </html>
-                    """.format(chromosome_len))
+                    else:
+                        # Open the HTML file in a write mode to write the information
+                        # of the page, including the chromosome information
+                        f = open("chromosome.html", "w")
 
-                    # Close the file
-                    f.close()
+                        f.write("""<!DOCTYPE html>
+                        <html lang="en" dir="ltr">
+                          <head>
+                            <meta charset="utf-8">
+                            <title>CHROMOSOMES INFORMATION</title>
+                          </head>
+                          <body style="background-color: lightsalmon;">
+                            <h1 style="color:midnight;">CHROMOSOMES INFORMATION</h1>
+                             <br> The length of the introduced chromosome is: <br>
+                             {}
+                             <br>
+                             <a href="/"> Back to the main page </a>
+                          </body>
+                        </html>
+                        """.format(chromosome_len))
 
-                    # Calling the function to open another page
-                    process_info("chromosome.html")
+                        # Close the file
+                        f.close()
 
-            # In case that the specie does not exist in the data base
-            except KeyError:
-                process_error("error-key.html")
+                        # Calling the function to open another page
+                        process_info("chromosome.html")
+
+                # In case that the specie does not exist in the data base
+                except KeyError:
+                    process_error("error-key.html")
 
         elif resource == "/geneSeq":
-            # Generic name introduced by the client
-            gene = comp_request[1][5:]
-            gene = gene.upper()
-
-            # Stablish the connection with the data base and first
-            # retrieve the id of the introduced gen and then the sequence of the gen
-            try:
+            if "json=1" in self.path:
+                req = comp_request[1].split('&')
+                # Generic name introduced by the client
+                gene = req[0][5:]
+                print(gene)
+                gene = gene.upper()
                 gen_id = connection("/homology/symbol/human/" + gene)  # This endpoint needs a parameter (gene)
                 sequence = connection("/sequence/id/" + gen_id)  # This endpoint needs a parameter (gen_id)
 
-                # Open the HTML file in a write mode to write the information
-                # of the page, including the sequence of the gen.
-                f = open("gen-seq.html", "w")
+                process_json(json.dumps({'sequence': sequence}))
 
-                f.write("""<!DOCTYPE html>
-                <html lang="en" dir="ltr">
-                  <head>
-                    <meta charset="utf-8">
-                    <title>GEN SEQUENCE</title>
-                  </head>
-                  <body style="background-color: lightsalmon;">
-                    <h1 style="color:midnight;">GENE SEQUENCE</h1>
-                     <br> The sequence of the gen is: <br>
-                     {}
-                     <br>
-                     <a href="/"> Back to the main page </a>
-                  </body>
-                </html>
-                """.format(sequence))
+            # Stablish the connection with the data base and first
+            # retrieve the id of the introduced gen and then the sequence of the gen
+            else:
+                gene = comp_request[1][5:]
+                gene = gene.upper()
 
-                # Close the file
-                f.close()
+                try:
 
-                # Calling the function to open another page
-                process_info("gen-seq.html")
+                    gen_id = connection("/homology/symbol/human/" + gene)  # This endpoint needs a parameter (gene)
+                    sequence = connection("/sequence/id/" + gen_id)  # This endpoint needs a parameter (gen_id)
 
-            # In case that the specie does not exist in the data base
-            except KeyError:
-                process_error("error-key.html")
+                    # Open the HTML file in a write mode to write the information
+                    # of the page, including the sequence of the gen.
+                    f = open("gen-seq.html", "w")
+
+                    f.write("""<!DOCTYPE html>
+                    <html lang="en" dir="ltr">
+                      <head>
+                        <meta charset="utf-8">
+                        <title>GEN SEQUENCE</title>
+                      </head>
+                      <body style="background-color: lightsalmon;">
+                        <h1 style="color:midnight;">GENE SEQUENCE</h1>
+                         <br> The sequence of the gen is: <br>
+                         {}
+                         <br>
+                         <a href="/"> Back to the main page </a>
+                      </body>
+                    </html>
+                    """.format(sequence))
+
+                    # Close the file
+                    f.close()
+
+                    # Calling the function to open another page
+                    process_info("gen-seq.html")
+
+                # In case that the specie does not exist in the data base
+                except KeyError:
+                    process_error("error-key.html")
 
         elif resource == "/geneInfo":
-            # Generic name introduced by the client
-            gene = comp_request[1][5:]
-            gene = gene.upper()
-
-            # Stablish the connection with the data base and first
-            # retrieve the id of the introduced gen and then the information of the gene
-            try:
+            if "json=1" in self.path:
+                req = comp_request[1].split('&')
+                # Specie introduced by the client
+                gene = req[0][5:]
+                gene = gene.upper()
+                # Replace the + sign when the specie has two names by _
+                # that is the way that appears in ensembl data base
+                #specie = specie.replace("+", "_").lower()
                 gen_id = connection("/homology/symbol/human/" + gene)  # This endpoint needs a parameter (gene)
                 info_gen = connection("lookup/id/" + gen_id)  # This endpoint needs a parameter (gen_id)
+                start = info_gen[0]
+                end = info_gen[1]
+                id = info_gen[2]
+                chromo_part = info_gen[3]
+                length_gene = info_gen[4]
+                process_json(json.dumps({"start": start, "end": end, "id": id, "chromosome": chromo_part, "length": length_gene }))
+            else:
+                # Generic name introduced by the client
+                gene = comp_request[1][5:]
+                gene = gene.upper()
 
-                # Open the HTML file in a write mode to write the information
-                # of the page, including the sequence of the gen.
-                f = open("info-gen.html", "w")
+                # Stablish the connection with the data base and first
+                # retrieve the id of the introduced gen and then the information of the gene
+                try:
+                    gen_id = connection("/homology/symbol/human/" + gene)  # This endpoint needs a parameter (gene)
+                    info_gene = connection("lookup/id/" + gen_id)  # This endpoint needs a parameter (gen_id)
+                    start = info_gene[0]
+                    end = info_gene[1]
+                    id = info_gene[2]
+                    chromo_part = info_gene[3]
+                    length_gene = info_gene[4]
+                    info = """Start of the gen: {}\n End of the gen: {}\nID of the gene: {}\nThe chromosome where this 
+                    gene belongs is:{}\nThe length of the gene is: {}""".format(start,end,id,chromo_part,length_gene)
+                    # Open the HTML file in a write mode to write the information
+                    # of the page, including the sequence of the gen.
+                    f = open("info-gen.html", "w")
 
-                f.write("""<!DOCTYPE html>
-                <html lang="en" dir="ltr">
-                  <head>
-                    <meta charset="utf-8">
-                    <title>GENE INFORMATION</title>
-                  </head>
-                  <body style="background-color: lightsalmon;">
-                    <h1 style="color:midnight;">GENE INFORMATION</h1>
-                     <br> {} <br>
-                     <a href="/"> Back to the main page </a>
-                  </body>
-                </html>
-                """.format(info_gen))
+                    f.write("""<!DOCTYPE html>
+                    <html lang="en" dir="ltr">
+                      <head>
+                        <meta charset="utf-8">
+                        <title>GENE INFORMATION</title>
+                      </head>
+                      <body style="background-color: lightsalmon;">
+                        <h1 style="color:midnight;">GENE INFORMATION</h1>
+                         <br> {} <br>
+                         <a href="/"> Back to the main page </a>
+                      </body>
+                    </html>
+                    """.format(info))
 
-                # Close the file
-                f.close()
+                    # Close the file
+                    f.close()
 
-                # Calling the function to open another page
-                process_info("info-gen.html")
+                    # Calling the function to open another page
+                    process_info("info-gen.html")
 
-            # In case that the specie does not exist in the data base
-            except KeyError:
-                process_error("error-key.html")
+                # In case that the specie does not exist in the data base
+                except KeyError:
+                    process_error("error-key.html")
 
         elif resource == "/geneCalc":
-            # Generic name introduced by the client
-            gene = comp_request[1][5:]
-            gene = gene.upper()
-
-            # Stablish the connection with the data base and first
-            # retrieve the id of the introduced gen and then the sequence of the gene
-            try:
+            if "json=1" in self.path:
+                req = comp_request[1].split('&')
+                # Specie introduced by the client
+                gene = req[0][5:]
+                gene = gene.upper()
                 gen_id = connection("/homology/symbol/human/" + gene)  # This endpoint needs a parameter (gene)
                 sequence = connection("/sequence/id/" + gen_id)  # This endpoint needs a parameter (gen_id)
 
@@ -520,90 +640,129 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 perc_t = sequence.perc("T")
                 perc_g = sequence.perc("G")
                 perc_c = sequence.perc("C")
+                process_json(json.dumps({"length": seq_len, "A percentage ": perc_a, "T percentage": perc_t, "G percentage": perc_g, "C percentage": perc_c}))
+            else:
+                # Generic name introduced by the client
+                gene = comp_request[1][5:]
+                gene = gene.upper()
 
-                # Open the HTML file in a write mode to write the information
-                # of the page, including the sequence of the gen.
-                f = open("cal-gen.html", "w")
+                # Stablish the connection with the data base and first
+                # retrieve the id of the introduced gen and then the sequence of the gene
+                try:
+                    gen_id = connection("/homology/symbol/human/" + gene)  # This endpoint needs a parameter (gene)
+                    sequence = connection("/sequence/id/" + gen_id)  # This endpoint needs a parameter (gen_id)
 
-                f.write("""<!DOCTYPE html>
-                <html lang="en" dir="ltr">
-                  <head>
-                    <meta charset="utf-8">
-                    <title>GENE CALCULATIONS</title>
-                  </head>
-                  <body style="background-color: lightsalmon;">
-                    <h1 style="color:midnight;">GENE CALCULATIONS</h1>
-                     <br> The length of the sequence is: {} <br>
-                     <br> The percentage of A bases is: {} <br>
-                     <br> The percentage of C bases is: {} <br>
-                     <br> The percentage of T bases is: {} <br>
-                     <br> The percentage of G bases is: {} <br>
-                     <a href="/"> Back to the main page </a>
-                  </body>
-                </html>
-                """.format(seq_len, perc_a, perc_c, perc_t, perc_g))
+                    # Performing the calculations using the class Seq
+                    # Obtain the length and the percentage of the bases
+                    sequence = Seq(sequence)
+                    seq_len = sequence.len()
+                    perc_a = sequence.perc("A")
+                    perc_t = sequence.perc("T")
+                    perc_g = sequence.perc("G")
+                    perc_c = sequence.perc("C")
 
-                # Close the file
-                f.close()
-
-                # Calling the function to open another page
-                process_info("cal-gen.html")
-
-            # In case that the specie does not exist in the data base
-            except KeyError:
-                process_error("error-key.html")
-
-        elif resource == "/geneList":
-            # In that case the request message have different parts
-            req = comp_request[1].split('&')
-            # Chromosome introduced by the client
-            chromo = str(req[0][7:])
-            # Start position of the chromosome
-            start = str(req[1][6:])
-            # End position of the chromosome
-            end = str(req[2][4:])
-
-            # Stablish the connection with the data base and retrieve the
-            # genes of the selected part of the  chromosome
-            try:
-                # This endpoint needs three parameters (chromo, start, end)
-                # We also have to introduced the type of feature to retrieve
-                # in our case gene, nevertheless multiple values are accepted
-                genes_id = connection("overlap/region/human/" + chromo + ":" + start + "-" + end + "?feature=gene")
-
-                # The client have introduced valid numbers of the chromosome and the start and end point
-                # but they do not correspond to any gene in the data base
-                if genes_id == "":
-                    process_error("error.html")
-
-                # In this case everything is correct
-                else:
                     # Open the HTML file in a write mode to write the information
-                    # of the page, including the names of the genes.
-                    f = open("genes-chromo.html", "w")
+                    # of the page, including the sequence of the gen.
+                    f = open("cal-gen.html", "w")
 
                     f.write("""<!DOCTYPE html>
                     <html lang="en" dir="ltr">
                       <head>
                         <meta charset="utf-8">
-                        <title>GENE NAMES</title>
+                        <title>GENE CALCULATIONS</title>
                       </head>
                       <body style="background-color: lightsalmon;">
-                        <h1 style="color:midnight;">GENE NAMES</h1>
-                         <br> {} <br>
+                        <h1 style="color:midnight;">GENE CALCULATIONS</h1>
+                         <br> The length of the sequence is: {} <br>
+                         <br> The percentage of A bases is: {} <br>
+                         <br> The percentage of C bases is: {} <br>
+                         <br> The percentage of T bases is: {} <br>
+                         <br> The percentage of G bases is: {} <br>
                          <a href="/"> Back to the main page </a>
                       </body>
                     </html>
-                    """.format(genes_id))
+                    """.format(seq_len, perc_a, perc_c, perc_t, perc_g))
 
                     # Close the file
                     f.close()
 
                     # Calling the function to open another page
-                    process_info("genes-chromo.html")
+                    process_info("cal-gen.html")
 
-            except KeyError:
-                process_error("error-key.html")
+                # In case that the specie does not exist in the data base
+                except KeyError:
+                    process_error("error-key.html")
+
+        elif resource == "/geneList":
+            if "json=1" in self.path:
+                # In that case the request message have different parts
+                req = comp_request[1].split('&')
+                # Chromosome introduced by the client
+                chromo = str(req[0][7:])
+                # Start position of the chromosome
+                start = str(req[1][6:])
+                # End position of the chromosome
+                end = str(req[2][4:])
+
+                genes_id = connection("overlap/region/human/" + chromo + ":" + start + "-" + end + "?feature=gene")
+                gene_id = genes_id[0]
+                gene_name = genes_id[1]
+                process_json(json.dumps({"id": gene_id, "name": gene_name}))
+
+            else:
+                # In that case the request message have different parts
+                req = comp_request[1].split('&')
+                # Chromosome introduced by the client
+                chromo = str(req[0][7:])
+                # Start position of the chromosome
+                start = str(req[1][6:])
+                # End position of the chromosome
+                end = str(req[2][4:])
+                # Stablish the connection with the data base and retrieve the
+                # genes of the selected part of the  chromosome
+                try:
+                    # This endpoint needs three parameters (chromo, start, end)
+                    # We also have to introduced the type of feature to retrieve
+                    # in our case gene, nevertheless multiple values are accepted
+                    genes_id = connection("overlap/region/human/" + chromo + ":" + start + "-" + end + "?feature=gene")
+                    gene_id = genes_id[0]
+                    print(gene_id)
+                    gene_name = genes_id[1]
+
+                    # The client have introduced valid numbers of the chromosome and the start and end point
+                    # but they do not correspond to any gene in the data base
+                    if gene_id == [] or gene_name == []:
+                        process_error("error.html")
+
+                    # In this case everything is correct
+                    else:
+                        # Open the HTML file in a write mode to write the information
+                        # of the page, including the names of the genes.
+                        f = open("genes-chromo.html", "w")
+
+                        f.write("""<!DOCTYPE html>
+                        <html lang="en" dir="ltr">
+                          <head>
+                            <meta charset="utf-8">
+                            <title>GENE NAMES</title>
+                          </head>
+                          <body style="background-color: lightsalmon;">
+                            <h1 style="color:midnight;">GENE NAMES</h1>
+                             <br>The id of the genes are: {} <br>
+                             <br>The names of the genes are: {} <br>
+                             <a href="/"> Back to the main page </a>
+                          </body>
+                        </html>
+                        """.format(gene_id, gene_name))
+
+                        # Close the file
+                        f.close()
+
+                        # Calling the function to open another page
+                        process_info("genes-chromo.html")
+
+                except KeyError:
+                    process_error("error-key.html")
 
         # Error page
         else:
