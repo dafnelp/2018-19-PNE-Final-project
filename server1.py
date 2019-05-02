@@ -284,7 +284,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                     limit = req[0][6:]
                     # List of the names of the species
                     names_species = connection("/info/species")
-
+                    digit = [0, 1, 2, 3, 5, 6, 7, 8, 9]
                     if limit == "" or int(limit) <= len(names_species) and limit > "0":
                         process_json(json.dumps(names_species))
 
@@ -312,6 +312,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                     # return the info about the species
                     list_species = connection("/info/species")
                     names_species = ""
+                    digit = [0, 1, 2, 3, 5, 6, 7, 8, 9]
                     for i in list_species:
                         i = i.replace("_", " ")
 
@@ -347,7 +348,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                         # Calling the function to open another page
                         process_info("listSpecies.html")
 
-                    elif limit == "0" or int(limit) > len(list_species) or limit < "0":
+                    elif limit == "0" or int(limit) > len(list_species) or limit < "0" or limit not in digit:
                         # The limit selected is out of the range
                         process_error("error-limit.html")
                 else:
