@@ -5,6 +5,8 @@ import termcolor
 import json
 
 from Seq import Seq
+
+# This allows that the port does not block
 socketserver.TCPServer.allow_reuse_address = True
 # Define the port
 PORT = 8000
@@ -21,27 +23,12 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
         termcolor.cprint(self.requestline, 'blue')
 
         # Dividing the complete request line in order to get the info
-        # First having the resource and later having the limit or the specie
+        # First having the resource
         comp_request = self.path.split('?')
 
         # Resource depending the request of the client
         resource = comp_request[0]
-
-        # Processing the other part of the request message, in the case that the resource is
-        # "/listSpecies" or "/chromosomeLength" because they have parameters such as the limit
-        # or the chromo name that will affect the functions, the information should be shown
-        # according this parameters
-        if resource == "/listSpecies" and "limit" in self.path:
-            # Number of species to show
-            limit = comp_request[1][6:]
-
-        elif resource == "/chromosomeLength":
-            # Split the second part of the request message
-            req = comp_request[1].split('&')
-            # Number of chromosome to show
-            chromo = req[1][7:]
-        else:
-            pass
+        print(resource)
 
         def connection(ENDPOINT):
             """ FUNCTION that will stablish the connection to the ensembl
@@ -85,21 +72,22 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 # Species in the data base
                 specie_db = species["species"]
 
-                # Iterate over the list of the information about the species
-                # We will only need the name of the specie
-
-                # Stablish a counter to show only the species that are selected in the limit input
-                # If this counter is equal to the limit the for loop will break and be only able to show
-                # the species in the counter until that moment
+                # Presence of limit parameter
                 if "limit" in self.path:
                     # Storing the species as a list
-                    species = []
+                    common_name = []
+                    scientific_name = []
                     # Counter for the species to show
                     counter = 0
-                    for i in specie_db:
-                        species.append(i['name'])
 
-                        # This is the key used for the name of the specie
+                    # Iterate over the list of the information about the species
+
+                    # Establish a counter to show only the species that are selected in the limit input
+                    # If this counter is equal to the limit the for loop will break and be only able to show
+                    # the species in the counter until that moment
+                    for i in specie_db:
+                        scientific_name.append(i['name'])  # Key used for the common name of the specie
+                        common_name.append(i['display_name'])  # Key used for the scientific name of the specie
 
                         counter += 1
 
@@ -111,20 +99,25 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                         else:
                             continue
 
+                    # Create a list with the common and scientific name of the specie
+                    species = [common_name, scientific_name]
+
                     # --- RETURN --- NAME OF THE SPECIES
                     return species
 
+                # Without the presence of a limit parameter
                 else:
                     # Storing the species as a list
-                    species = []
-                    # Counter for the species to show
-                    counter = 0
+                    common_name = []
+                    scientific_name = []
+
+                    # Iterate over the list of the information about the species
                     for i in specie_db:
-                        species.append(i['name'])
+                        scientific_name.append(i['name'])  # Key used for the common name of the specie
+                        common_name.append(i['display_name'])  # Key used for the scientific name of the specie
 
-                        # This is the key used for the name of the specie
-
-                        counter += 1
+                    # Create a list with the common and scientific name of the specie
+                    species = [common_name, scientific_name]
 
                     # --- RETURN --- NAME OF THE SPECIES
                     return species
@@ -149,10 +142,10 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                     # Iterate over the list of the information about the chromosomes
                     # We will only need the length of the chromosome
                     for chromosome in species["top_level_region"]:
-                        # The names of the chromosomes are numbers
+                        # The names of the chromosomes must coincide with the chromosome introduced
+                        # by the client (chromo)
                         if chromosome["name"] == chromo:  # The key for the name of the chromosomes is "name"
                             len_chromosome = str(chromosome["length"])  # This is the key used for the length
-                        # Length converted previously to a string to use it in the HTML file
 
                     # ---- RETURN --- LENGTH OF THE CHROMOSOMES
                     return len_chromosome
@@ -271,58 +264,79 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
         # Open the main page
         if resource == '/':
-            process_info("index-1.html")
+            process_info("index.html")
 
         # Open the page with the message according the request
         elif resource == '/listSpecies':
 
+            # In that case the server creates a json object
             if "json=1" in self.path:
-
+                # Presence of a limit parameter
                 if "limit" in self.path:
                     req = comp_request[1].split('&')
                     # Number of species to show
                     limit = req[0][6:]
+
                     # List of the names of the species
                     names_species = connection("/info/species")
-                    digit = [0, 1, 2, 3, 5, 6, 7, 8, 9]
-                    if limit == "" or int(limit) <= len(names_species) and limit > "0":
-                        process_json(json.dumps(names_species))
+                    # Separate the common and scientific name from the general list
+                    cn_species = names_species[0]
+                    sn_species = names_species[1]
 
-                    elif limit == "0" or int(limit) > len(names_species) or limit < "0":
+                    # Now we are going to focus in the number of species to show
+                    # In the case that the limit is out of range or the number
+                    # is not valid (negative or 0) there will be an error page
+                    # If not the selected number of species will be shown or all the
+                    # species if the client did not specify a number
+
+                    if limit > "0" and limit <= str(len(cn_species)) or limit == "":
+                        # Creating a json object with the requested data
+                        process_json(json.dumps({"Common name": cn_species, "Scientific name": sn_species}))
+
+                    else:
                         # The limit selected is out of the range
                         process_error("error-limit.html")
+
+                # Without the presence of a limit parameter
                 else:
                     # List of the names of the species
                     names_species = connection("/info/species")
+                    # Separates the common and scientific name from the general list
+                    cn_species = names_species[0]
+                    sn_species = names_species[1]
 
-                    process_json(json.dumps(names_species))
+                    # Creating a json object with the requested data
+                    process_json(json.dumps({"Common name": cn_species, "Scientific name": sn_species}))
 
+            # HTML response
             else:
+                # Presence of a limit parameter
                 if "limit" in self.path:
-                    req = comp_request[1].split('&')
                     # Number of species to show
-                    limit = req[0][6:]
-
-                    # Now we are going to focus in the maximum number of species in the data base
-                    # In the case that the limit is out of range or the number
-                    # is not valid (negative or 0) there will be an error page
-                    # If not the maximum number of species will be shown
+                    limit = comp_request[1][6:]
 
                     # Establish the connection with the data base and
                     # return the info about the species
-                    list_species = connection("/info/species")
-                    names_species = ""
-                    digit = [0, 1, 2, 3, 5, 6, 7, 8, 9]
-                    for i in list_species:
+                    names_species = connection("/info/species")
+                    # Separate the common and scientific name from the general list
+                    cn_species = names_species[0]
+                    sn_species = names_species[1]
+
+                    # A format to presents the species in the HTML, one specie below the other
+                    common = ""
+                    scientific = ""
+                    for i in cn_species:
+                        common = common + i
+                        common = common + "<br>"
+                    for i in sn_species:
                         i = i.replace("_", " ")
+                        scientific = scientific + i
+                        scientific = scientific + "<br>"
 
-                        names_species = names_species + i
+                    if limit > "0" and limit <= str(len(cn_species)) or limit == "":
 
-                        names_species = names_species + "<br>"
-
-                    if limit == "" or int(limit) <= len(list_species) and limit > "0":
                         # Open the HTML file in a write mode to write the information
-                        # of the page, including the species
+                        # of the page, including the species names
                         f = open("listSpecies.html", "w")
 
                         f.write("""<!DOCTYPE html>
@@ -333,14 +347,18 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                           </head>
                           <body style="background-color: lightsalmon;">
                             <h1 style="color:midnight;">LIST OF THE SPECIES</h1>
-                             <h2> This is the list of the species: </h2> 
+                             <h3> The common names are: </h3> 
                              <br>
                              {} 
+                             <br>
+                             <h3> The scientific names are: </h3> 
+                             <br>
+                             {}
                              <br>
                              <a href="/"> Back to the main page </a>
                           </body>
                         </html>
-                        """.format(names_species))
+                        """.format(common, scientific))
 
                         # Close the file
                         f.close()
@@ -348,21 +366,32 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                         # Calling the function to open another page
                         process_info("listSpecies.html")
 
-                    elif limit == "0" or int(limit) > len(list_species) or limit < "0" or limit not in digit:
+                    else:
                         # The limit selected is out of the range
                         process_error("error-limit.html")
+
+                # Without the presence of a limit parameter
                 else:
-                    list_species = connection("/info/species")
+                    # Establish the connection with the data base and
+                    # return the info about the species
+                    names_species = connection("/info/species")
+                    # Separates the common and scientific name from the general list
+                    cn_species = names_species[0]
+                    sn_species = names_species[1]
 
-                    names_species = ""
-                    for i in list_species:
+                    # A format to presents the species in the HTML, one specie below the other
+                    common = ""
+                    scientific = ""
+                    for i in cn_species:
+                        common = common + i
+                        common = common + "<br>"
+                    for i in sn_species:
                         i = i.replace("_", " ")
+                        scientific = scientific + i
+                        scientific = scientific + "<br>"
 
-                        names_species = names_species + i
-
-                        names_species = names_species + "<br>"
                     # Open the HTML file in a write mode to write the information
-                    # of the page, including the species
+                    # of the page, including the species names
                     f = open("listSpecies.html", "w")
 
                     f.write("""<!DOCTYPE html>
@@ -373,14 +402,18 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                       </head>
                       <body style="background-color: lightsalmon;">
                         <h1 style="color:midnight;">LIST OF THE SPECIES</h1>
-                         <h2> This is the list of the species: </h2> 
+                         <h3> The common names are: </h3> 
                          <br>
                          {} 
+                         <br>
+                         <h3> The scientific names are: </h3> 
+                         <br>
+                         {}
                          <br>
                          <a href="/"> Back to the main page </a>
                       </body>
                     </html>
-                    """.format(names_species))
+                    """.format(common, scientific))
 
                     # Close the file
                     f.close()
@@ -389,17 +422,33 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                     process_info("listSpecies.html")
 
         elif resource == "/karyotype":
+            # In that case the server creates a json object
             if "json=1" in self.path:
                 req = comp_request[1].split('&')
                 # Specie introduced by the client
                 specie = req[0][7:]
+
                 # Replace the + sign when the specie has two names by _
                 # that is the way that appears in ensembl data base
-                #specie = specie.replace("+", "_").lower()
-                karyotype_specie = connection("/info/assembly/" + specie)
+                specie = specie.replace("+", "_").lower()
 
-                process_json(json.dumps(karyotype_specie))
+                try:
+                    # Stablish the connection with the data base and
+                    # return the info about the karyotype
+                    karyotype_specie = connection("/info/assembly/" + specie)
 
+                    # The specie exists in the dat abase but does not have associated any chromosome
+                    if karyotype_specie == []:
+                        process_error("error-key.html")
+                    else:
+                        # Creating a json object with the requested data
+                        process_json(json.dumps({"chromosomes": karyotype_specie}))
+
+                # In the case the specie does not exist in the data base
+                except KeyError:
+                    process_error("error-key.html")
+
+            # HTML response
             else:
                 # Specie introduced by the client
                 specie = comp_request[1][7:]
@@ -411,10 +460,10 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 # Stablish the connection with the data base and
                 # return the info about the karyotype
                 try:
-                    karyotype_specie = connection("/info/assembly/" + specie)  # This endpoint needs a parameter (specie)
+                    karyotype_specie = connection("/info/assembly/" + specie)  # The endpoint needs a parameter (specie)
 
+                    # The specie exists in the dat abase but does not have asociated any chromosome
                     if karyotype_specie == []:
-                        print(karyotype_specie)
                         process_error("error-key.html")
                     else:
                         # Open the HTML file in a write mode to write the information
@@ -429,7 +478,9 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                           </head>
                           <body style="background-color: lightsalmon;">
                             <h1 style="color:midnight;">KARYOTYPE INFORMATION</h1>
-                             <br> The chromosomes of the specie are: <br>
+                             <br> 
+                             <h3> The chromosomes of the specie are: </h3> 
+                             <br>
                              {}
                              <br>
                              <a href="/"> Back to the main page </a>
@@ -443,7 +494,6 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                         # Calling the function to open another page
                         process_info("karyotype.html")
 
-
                 # In case that the specie does not exist in the data base
                 except KeyError:
                     process_error("error-key.html")
@@ -451,8 +501,10 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
         elif resource == "/chromosomeLength":
             if "json=1" in self.path:
                 req = comp_request[1].split('&')
+                print(req)
                 # Specie introduced by the client
                 specie = req[0][7:]
+                chromo = req[1][7:]
                 # Replace the + sign when the specie has two names by _
                 # that is the way that appears in ensembl data base
                 #specie = specie.replace("+", "_").lower()
@@ -463,7 +515,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 req = comp_request[1].split('&')
                 # Specie introduced by the client
                 specie = req[0][7:]
-
+                chromo = req[1][7:]
                 # Replace the + sign when the specie has two names by _
                 # that is the way that appears in ensembl data base
                 specie = specie.replace("+", "_").lower()
