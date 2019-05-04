@@ -28,7 +28,6 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
         # Resource depending the request of the client
         resource = comp_request[0]
-        print(resource)
 
         def connection(ENDPOINT):
             """ FUNCTION that will stablish the connection to the ensembl
@@ -158,11 +157,13 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 # With this connection we obtain the id of the introduced gen
                 # WE ARE WORKING ONLY WITH HUMAN GENES
                 id_gen = species["data"][0]["id"]
+
                 # ---- RETURN --- IDENTIFICATION OF THE GEN
                 return id_gen
 
             if "/sequence/id/" in ENDPOINT:
                 seq_gen = species["seq"]
+
                 # ---- RETURN --- SEQUENCE OF THE GENE
                 return seq_gen
 
@@ -175,8 +176,9 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 # The length of the gene is obtained subtracting the finish and the start position
                 length_gene = species["end"] - species["start"]
 
-                # line breaks in the HTML are included
-                info = [start, end, id, chromo_part, length_gene]
+                # Creating a list wit the information of the gene
+                info = [id, chromo_part, start, end, length_gene]
+
                 # ---- RETURN --- INFORMATION ABOUT THE GENE
                 return info
 
@@ -192,6 +194,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                     gene_name.append(species[i]["external_name"])
 
                 info = [gene_id, gene_name]
+
                 # ---- RETURN --- NAMES OF THE GENE
                 return info
 
@@ -232,6 +235,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             self.send_response(404)  # --- status line - file not found error
 
             # Define the content-type header:
+            # In our case text/html (should open an HTML file)
             self.send_header('Content-Type', 'text/html')
             self.send_header('Content-Length', len(str.encode(content)))
 
@@ -248,7 +252,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             self.send_response(200)  # --- status line - everything Ok
 
             # Define the content-type header:
-            # In our case text/html (should open an HTML file)
+            # In our case application/jso
             self.send_header('Content-Type', 'application/json')
             self.send_header('Content-Length', len(str.encode(content)))
 
@@ -499,40 +503,44 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                     process_error("error-key.html")
 
         elif resource == "/chromosomeLength":
+            req = comp_request[1].split('&')
+            # Specie introduced by the client
+            specie = req[0][7:]
+            # Chromosome introduced by the client
+            chromo = req[1][7:]
+            # Replace the + sign when the specie has two names by _
+            # that is the way that appears in ensembl data base
+            specie = specie.replace("+", "_").lower()
+
+            # In that case the server creates a json object
             if "json=1" in self.path:
-                req = comp_request[1].split('&')
-                print(req)
-                # Specie introduced by the client
-                specie = req[0][7:]
-                chromo = req[1][7:]
-                # Replace the + sign when the specie has two names by _
-                # that is the way that appears in ensembl data base
-                #specie = specie.replace("+", "_").lower()
-                karyotype_specie = connection("/info/assembly/" + specie)
+                # Establish the connection with the data base and
+                # return the info about the chromosome
+                try:
+                    chromosome_len = connection("/info/assembly/" + specie)
+                    # The specie exists in the dat abase but does not have associated any chromosome
+                    if chromosome_len == "":
+                        process_error("error-key.html")
+                    else:
+                        # Creating a json object with the requested data
+                        process_json(json.dumps({"length": chromosome_len}))
+                except KeyError:
+                    process_error("error-key.html")
 
-                process_json(json.dumps(karyotype_specie))
+            # HTML response
             else:
-                req = comp_request[1].split('&')
-                # Specie introduced by the client
-                specie = req[0][7:]
-                chromo = req[1][7:]
-                # Replace the + sign when the specie has two names by _
-                # that is the way that appears in ensembl data base
-                specie = specie.replace("+", "_").lower()
-
-                # Stablish the connection with the data base and
+                # Establish the connection with the data base and
                 # return the info about the chromosomes
                 try:
-                    chromosome_len = connection("/info/assembly/" + specie)  # This endpoint needs a parameter (the specie)
+                    chromosome_len = connection("/info/assembly/" + specie)  # This endpoint needs a parameter (specie)
 
-                    # In the case that the function does not return any info about the length
-                    # means that the chromo name is not valid so an error page will be opened
+                    # The specie exists in the dat abase but does not have associated any chromosome
                     if chromosome_len == "":
-                        process_error("error-limit.html")
+                        process_error("error-key.html")
 
                     else:
                         # Open the HTML file in a write mode to write the information
-                        # of the page, including the chromosome information
+                        # of the page, including the chromosome length
                         f = open("chromosome.html", "w")
 
                         f.write("""<!DOCTYPE html>
@@ -543,8 +551,9 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                           </head>
                           <body style="background-color: lightsalmon;">
                             <h1 style="color:midnight;">CHROMOSOMES INFORMATION</h1>
-                             <br> The length of the introduced chromosome is: <br>
+                             <h3> The length of the introduced chromosome is: </h3>
                              {}
+                             <br>
                              <br>
                              <a href="/"> Back to the main page </a>
                           </body>
@@ -562,25 +571,32 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                     process_error("error-key.html")
 
         elif resource == "/geneSeq":
+            # In that case the server creates a json object
             if "json=1" in self.path:
                 req = comp_request[1].split('&')
                 # Generic name introduced by the client
                 gene = req[0][5:]
-                print(gene)
                 gene = gene.upper()
-                gen_id = connection("/homology/symbol/human/" + gene)  # This endpoint needs a parameter (gene)
-                sequence = connection("/sequence/id/" + gen_id)  # This endpoint needs a parameter (gen_id)
 
-                process_json(json.dumps({'sequence': sequence}))
+                # Establish the connection with the data base and first
+                # retrieve the id of the introduced gen and then the sequence of the gen
+                try:
+                    gen_id = connection("/homology/symbol/human/" + gene)  # This endpoint needs a parameter (gene)
+                    sequence = connection("/sequence/id/" + gen_id)  # This endpoint needs a parameter (gen_id)
+                    # Creating a json object with the requested data
+                    process_json(json.dumps({'sequence': sequence}))
 
-            # Stablish the connection with the data base and first
-            # retrieve the id of the introduced gen and then the sequence of the gen
+                except KeyError:
+                    process_error("error-key.html")
+
+            # HTML response
             else:
                 gene = comp_request[1][5:]
                 gene = gene.upper()
 
+                # Establish the connection with the data base and first
+                # retrieve the id of the introduced gen and then the sequence of the gen
                 try:
-
                     gen_id = connection("/homology/symbol/human/" + gene)  # This endpoint needs a parameter (gene)
                     sequence = connection("/sequence/id/" + gen_id)  # This endpoint needs a parameter (gen_id)
 
@@ -596,8 +612,9 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                       </head>
                       <body style="background-color: lightsalmon;">
                         <h1 style="color:midnight;">GENE SEQUENCE</h1>
-                         <br> The sequence of the gen is: <br>
+                         <h3> The sequence of the gen is: </h3>
                          {}
+                         <br>
                          <br>
                          <a href="/"> Back to the main page </a>
                       </body>
@@ -615,41 +632,51 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                     process_error("error-key.html")
 
         elif resource == "/geneInfo":
+            # In that case the server creates a json object
             if "json=1" in self.path:
                 req = comp_request[1].split('&')
-                # Specie introduced by the client
+                # Generic name introduced by the client
                 gene = req[0][5:]
                 gene = gene.upper()
-                # Replace the + sign when the specie has two names by _
-                # that is the way that appears in ensembl data base
-                #specie = specie.replace("+", "_").lower()
-                gen_id = connection("/homology/symbol/human/" + gene)  # This endpoint needs a parameter (gene)
-                info_gen = connection("lookup/id/" + gen_id)  # This endpoint needs a parameter (gen_id)
-                start = info_gen[0]
-                end = info_gen[1]
-                id = info_gen[2]
-                chromo_part = info_gen[3]
-                length_gene = info_gen[4]
-                process_json(json.dumps({"start": start, "end": end, "id": id, "chromosome": chromo_part, "length": length_gene }))
+
+                # Establish the connection with the data base and first
+                # retrieve the id of the introduced gen and then the information of the gene
+                try:
+                    gen_id = connection("/homology/symbol/human/" + gene)  # This endpoint needs a parameter (gene)
+                    info_gene = connection("lookup/id/" + gen_id)  # This endpoint needs a parameter (gen_id)
+                    # Requested data
+                    id = info_gene[0]
+                    chromo_part = info_gene[1]
+                    start = info_gene[2]
+                    end = info_gene[3]
+                    length_gene = info_gene[4]
+                    info = {"id": id, "chromosome": chromo_part, "start": start, "end": end, "length": length_gene}
+                    # Creating a json object with the requested data
+                    process_json(json.dumps(info))
+                except KeyError:
+                    process_error("error-key.html")
+
+            # HTML response
             else:
                 # Generic name introduced by the client
                 gene = comp_request[1][5:]
                 gene = gene.upper()
 
-                # Stablish the connection with the data base and first
+                # Establish the connection with the data base and first
                 # retrieve the id of the introduced gen and then the information of the gene
                 try:
                     gen_id = connection("/homology/symbol/human/" + gene)  # This endpoint needs a parameter (gene)
                     info_gene = connection("lookup/id/" + gen_id)  # This endpoint needs a parameter (gen_id)
-                    start = info_gene[0]
-                    end = info_gene[1]
-                    id = info_gene[2]
-                    chromo_part = info_gene[3]
+
+                    # Requested data
+                    id = info_gene[0]
+                    chromo_part = info_gene[1]
+                    start = info_gene[2]
+                    end = info_gene[3]
                     length_gene = info_gene[4]
-                    info = """Start of the gen: {}\n End of the gen: {}\nID of the gene: {}\nThe chromosome where this 
-                    gene belongs is:{}\nThe length of the gene is: {}""".format(start,end,id,chromo_part,length_gene)
+
                     # Open the HTML file in a write mode to write the information
-                    # of the page, including the sequence of the gen.
+                    # of the page, including the information of the gen.
                     f = open("info-gen.html", "w")
 
                     f.write("""<!DOCTYPE html>
@@ -660,11 +687,21 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                       </head>
                       <body style="background-color: lightsalmon;">
                         <h1 style="color:midnight;">GENE INFORMATION</h1>
-                         <br> {} <br>
+                         <h3> ID of the gene: </h3>
+                         {} <br>
+                         <h3> The chromosome where this gene belongs is: </h3>
+                         {} <br>
+                         <h3> Start of the gen: </h3>
+                         {} <br>
+                         <h3> End of the gen: </h3>
+                         {} <br>
+                         <h3> The length of the gene is: </h3>
+                         {} <br>
+                         <br>
                          <a href="/"> Back to the main page </a>
                       </body>
                     </html>
-                    """.format(info))
+                    """.format(id, chromo_part, start, end, length_gene))
 
                     # Close the file
                     f.close()
@@ -677,29 +714,39 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                     process_error("error-key.html")
 
         elif resource == "/geneCalc":
+            # In that case the server creates a json object
             if "json=1" in self.path:
                 req = comp_request[1].split('&')
-                # Specie introduced by the client
+                # Generic name introduced by the client
                 gene = req[0][5:]
                 gene = gene.upper()
-                gen_id = connection("/homology/symbol/human/" + gene)  # This endpoint needs a parameter (gene)
-                sequence = connection("/sequence/id/" + gen_id)  # This endpoint needs a parameter (gen_id)
+                # Establish the connection with the data base and first
+                # retrieve the id of the introduced gen and then the sequence of the gene
+                try:
+                    gen_id = connection("/homology/symbol/human/" + gene)  # This endpoint needs a parameter (gene)
+                    sequence = connection("/sequence/id/" + gen_id)  # This endpoint needs a parameter (gen_id)
 
-                # Performing the calculations using the class Seq
-                # Obtain the length and the percentage of the bases
-                sequence = Seq(sequence)
-                seq_len = sequence.len()
-                perc_a = sequence.perc("A")
-                perc_t = sequence.perc("T")
-                perc_g = sequence.perc("G")
-                perc_c = sequence.perc("C")
-                process_json(json.dumps({"length": seq_len, "A percentage ": perc_a, "T percentage": perc_t, "G percentage": perc_g, "C percentage": perc_c}))
+                    # Performing the calculations using the class Seq
+                    # Obtain the length and the percentage of the bases
+                    sequence = Seq(sequence)
+                    seq_len = sequence.len()
+                    perc_a = sequence.perc("A")
+                    perc_t = sequence.perc("T")
+                    perc_g = sequence.perc("G")
+                    perc_c = sequence.perc("C")
+                    info = {"length": seq_len, "A percentage ": perc_a, "T percentage": perc_t, "G percentage": perc_g, "C percentage": perc_c}
+                    # Creating a json object with the requested data
+                    process_json(json.dumps(info))
+
+                except KeyError:
+                    process_error("error-key.html")
+            # HTML response
             else:
                 # Generic name introduced by the client
                 gene = comp_request[1][5:]
                 gene = gene.upper()
 
-                # Stablish the connection with the data base and first
+                # Establish the connection with the data base and first
                 # retrieve the id of the introduced gen and then the sequence of the gene
                 try:
                     gen_id = connection("/homology/symbol/human/" + gene)  # This endpoint needs a parameter (gene)
@@ -726,11 +773,17 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                       </head>
                       <body style="background-color: lightsalmon;">
                         <h1 style="color:midnight;">GENE CALCULATIONS</h1>
-                         <br> The length of the sequence is: {} <br>
-                         <br> The percentage of A bases is: {} <br>
-                         <br> The percentage of C bases is: {} <br>
-                         <br> The percentage of T bases is: {} <br>
-                         <br> The percentage of G bases is: {} <br>
+                         <h3> The length of the sequence is: </h3>
+                         {} <br>
+                         <h3> The percentage of A bases is: </h3>
+                         {} <br>
+                         <h3> The percentage of C bases is: </h3> 
+                         {} <br>
+                         <h3> The percentage of T bases is: </h3> 
+                         {} <br>
+                         <h3> The percentage of G bases is: </h3>
+                         {} <br>
+                         <br>
                          <a href="/"> Back to the main page </a>
                       </body>
                     </html>
@@ -747,39 +800,46 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                     process_error("error-key.html")
 
         elif resource == "/geneList":
+            # In that case the request message have different parts
+            req = comp_request[1].split('&')
+            # Chromosome introduced by the client
+            chromo = str(req[0][7:])
+            # Start position of the chromosome
+            start = str(req[1][6:])
+            # End position of the chromosome
+            end = str(req[2][4:])
+
+            # In that case the server creates a json object
             if "json=1" in self.path:
-                # In that case the request message have different parts
-                req = comp_request[1].split('&')
-                # Chromosome introduced by the client
-                chromo = str(req[0][7:])
-                # Start position of the chromosome
-                start = str(req[1][6:])
-                # End position of the chromosome
-                end = str(req[2][4:])
+                # Establish the connection with the data base and retrieve the
+                # genes of the selected part of the  chromosome
+                try:
+                    genes_id = connection("overlap/region/human/" + chromo + ":" + start + "-" + end + "?feature=gene")
+                    # Requested info
+                    gene_id = genes_id[0]
+                    gene_name = genes_id[1]
+                    # The client have introduced valid numbers of the chromosome and the start and end point
+                    # but they do not correspond to any gene in the data base
+                    if gene_id == [] or gene_name == []:
+                        process_error("error.html")
+                    else:
+                        # Creating a json object with the requested data
+                        process_json(json.dumps({"id": gene_id, "name": gene_name}))
 
-                genes_id = connection("overlap/region/human/" + chromo + ":" + start + "-" + end + "?feature=gene")
-                gene_id = genes_id[0]
-                gene_name = genes_id[1]
-                process_json(json.dumps({"id": gene_id, "name": gene_name}))
+                except KeyError:
+                    process_error("error-key.html")
 
+            # HTML response
             else:
-                # In that case the request message have different parts
-                req = comp_request[1].split('&')
-                # Chromosome introduced by the client
-                chromo = str(req[0][7:])
-                # Start position of the chromosome
-                start = str(req[1][6:])
-                # End position of the chromosome
-                end = str(req[2][4:])
-                # Stablish the connection with the data base and retrieve the
+                # Establish the connection with the data base and retrieve the
                 # genes of the selected part of the  chromosome
                 try:
                     # This endpoint needs three parameters (chromo, start, end)
-                    # We also have to introduced the type of feature to retrieve
+                    # We also have to introduced the type of feature to retrieve,
                     # in our case gene, nevertheless multiple values are accepted
                     genes_id = connection("overlap/region/human/" + chromo + ":" + start + "-" + end + "?feature=gene")
+                    #Requested info
                     gene_id = genes_id[0]
-                    print(gene_id)
                     gene_name = genes_id[1]
 
                     # The client have introduced valid numbers of the chromosome and the start and end point
@@ -801,8 +861,11 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                           </head>
                           <body style="background-color: lightsalmon;">
                             <h1 style="color:midnight;">GENE NAMES</h1>
-                             <br>The id of the genes are: {} <br>
-                             <br>The names of the genes are: {} <br>
+                             <h3>The id of the genes are: </h3>
+                             {} <br>
+                             <h3>The names of the genes are: </h3>
+                             {} <br>
+                             <br>
                              <a href="/"> Back to the main page </a>
                           </body>
                         </html>
