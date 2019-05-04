@@ -838,9 +838,19 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                     # We also have to introduced the type of feature to retrieve,
                     # in our case gene, nevertheless multiple values are accepted
                     genes_id = connection("overlap/region/human/" + chromo + ":" + start + "-" + end + "?feature=gene")
+
                     #Requested info
                     gene_id = genes_id[0]
                     gene_name = genes_id[1]
+                    # A format to presents the species in the HTML, one specie below the other
+                    id = ""
+                    name = ""
+                    for i in gene_id:
+                        id = id + i
+                        id = id + "<br>"
+                    for i in gene_name:
+                        name = name + i
+                        name = name + "<br>"
 
                     # The client have introduced valid numbers of the chromosome and the start and end point
                     # but they do not correspond to any gene in the data base
@@ -869,7 +879,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                              <a href="/"> Back to the main page </a>
                           </body>
                         </html>
-                        """.format(gene_id, gene_name))
+                        """.format(id, name))
 
                         # Close the file
                         f.close()

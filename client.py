@@ -12,7 +12,7 @@ def response(request):
     conn = http.client.HTTPConnection(SERVER, PORT)
 
     # Send the request.
-    conn.request("GET", "/" + request + "&json=1")
+    conn.request("GET", request + "&json=1")
 
     # Wait for the server's response
     r1 = conn.getresponse()
@@ -34,28 +34,28 @@ def response(request):
     return
 
 # In that part we are going to test some request
-number = input("Introduce a number of species to show:")
-print("The list of species is: ")
-response("listSpecies?limit=" + number)
 
-print("The complete list of the species is:")
-response("listSpecies?")
+# Return the list of all the species
+response("/listSpecies?")
 
-specie = input("Introduce a specie:")
-response("karyotype?specie=" + specie)
+# Return the list of only 12 species
+response("/listSpecies?limit=12")
 
-chromo = input("Introduce a chromosome to test:")
-response("chromosomeLength?specie=" + specie + "&chromo=" + chromo)
+# Return the list of the chromosomes of one species
+response("/karyotype?specie=mouse")
 
-gene = input("Introduce a gene:")
-response("geneSeq?gene=" + gene)
+# Return the length of a chromosome, selecting the specie and the chromosome
+response("/chromosomeLength?specie=dog&chromo=5")
 
-response("geneInfo?gene=" + gene)
+# Return the sequence of a introduced gene
+response("/geneSeq?gene=frat1")
 
-response("geneCalc?gene=" + gene)
+# Return the information od a introduced gene
+response("/geneInfo?gene=WASH7P")
 
-chromo = input("Introduce a chromosome to test:")
-start = input("Introduce the starting point:")
-end = input("Introduce the endpoint:")
-response("geneList?chromo=" + chromo +"&start=" + start + "&end=" + end)
+# Return some calculations (length and percentage of the bases) of a introduced gene
+response("/geneCalc?gene=WASH7P")
+
+# Return the names of the genes that are located in the selected parts of the selected chromosomes
+response("/geneList?chromo=1&start=0&end=30000")
 
