@@ -1,0 +1,294 @@
+TESTING BASIC LEVEL
+
+--- MAIN PAGE ---
+
+  http://localhost:8000/
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>MAIN PAGE</title>
+  </head>
+  <body style="background-color:silver;">
+    <h1 style="color:black;">INFORMATION ABOUT SPECIES</h1>
+
+      <form action="listSpecies" method="get">
+        <h2 style="color:white;">LIST SPECIES </h2>
+        <p>This option will return all the species list</p>
+        <p>Select this option if you want to return the information as JSON <input type="checkbox" name="json" value="1"></p>
+        <p><button type="submit">Send</button></p>
+        <br><br>
+
+      </form>
+      <form action="listSpecies" method="get">
+        <h2 style="color:white;">LIST SPECIES </h2>
+        <p>Introduce a limit parameter for the list of species (optional)</p>
+        <p> Limit parameter:  <input type="number" name="limit"></p>
+        <p>Select this option if you want to return the information as JSON <input type="checkbox" name="json" value="1"></p>
+        <p><button type="submit">Send</button></p>
+        <br><br>
+      </form>
+
+      <form action="karyotype" method="get">
+        <h2 style="color:white;">KARYOTYPE INFORMATION </h2>
+        <p>Introduce a specie to know the information about the karyotype</p>
+        <p> Specie: <input type="text" name="specie"></p>
+        <p>Select this option if you want to return the information as JSON <input type="checkbox" name="json" value="1"></p>
+        <p><button type="submit">Send</button></p>
+        <br><br>
+      </form>
+
+      <form action="chromosomeLength" method="get">
+        <h2 style="color:white;">CHROMOSOME INFORMATION </h2>
+        <p>Introduce a specie to know the information about the chromosomes</p>
+        <p> Specie: <input type="text" name="specie"></p>
+        <p>Introduce the number of one chromosome to know the length</p>
+        <p> Number: <input type="text" name="chromo"></p>
+        <p>Select this option if you want to return the information as JSON <input type="checkbox" name="json" value="1"></p>
+        <p><button type="submit">Send</button></p>
+        <br><br>
+      </form>
+
+      <form action="geneSeq" method="get">
+        <h2 style="color:white;">GENE SEQUENCE </h2>
+        <p>Introduce a gen to know the information about the sequences</p>
+        <p> Gen: <input type="text" name="gene"></p>
+        <p>Select this option if you want to return the information as JSON <input type="checkbox" name="json" value="1"></p>
+        <p><button type="submit">Send</button></p>
+        <br><br>
+      </form>
+
+      <form action="geneInfo" method="get">
+        <h2 style="color:white;">GENE INFORMATION </h2>
+        <p>Introduce a gen to know the information about it</p>
+        <p> Gene: <input type="text" name="gene"></p>
+        <p>Select this option if you want to return the information as JSON <input type="checkbox" name="json" value="1"></p>
+        <p><button type="submit">Send</button></p>
+        <br><br>
+      </form>
+
+      <form action="geneCalc" method="get">
+        <h2 style="color:white;">GENE CALCULATIONS </h2>
+        <p>Introduce a gen to perform the calculations about it</p>
+        <p> Gene: <input type="text" name="gene"></p>
+        <p>Select this option if you want to return the information as JSON <input type="checkbox" name="json" value="1"></p>
+        <p><button type="submit">Send</button></p>
+        <br><br>
+      </form>
+
+      <form action="geneList" method="get">
+        <h2 style="color:white;">NAMES OF THE GENES</h2>
+        <p>Introduce the number of one chromosome to know the names of the genes in the chromosome</p>
+        <p> Chromosome: <input type="text" name="chromo"></p>
+        <p>Introduce the start of the chromosome you want to search for</p>
+        <p> Start: <input type="number" name="start"></p>
+        <p>Introduce the end of the chromosome you want to search for</p>
+        <p> End: <input type="number" name="end"></p>
+        <p>Select this option if you want to return the information as JSON <input type="checkbox" name="json" value="1"></p>
+        <p><button type="submit">Send</button></p>
+        <br><br>
+      </form>
+
+  </body>
+</html>
+
+
+--- TRYING A PAGE THAT DOES NOT EXIST ---
+
+  http://localhost:8000/thispagedoesnotexist
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>Error 404 - file not found</title>
+</head>
+<body style = "background-color: crimson">
+ <h1>Error 404 - file not found error</h1>
+ <p>A generic error have happened!</p>
+ <p>You can try again in this link! :)</p>
+ <a href="/"> Back to the main page </a>
+</body>
+</html>
+
+--- LIST SPECIES ---
+
+  http://localhost:8000/listSpecies
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>LIST OF THE SPECIES</title>
+  </head>
+  <body style="background-color: lightsalmon;">
+    <h1 style="color:midnight;">LIST OF THE SPECIES</h1>
+     <h3> The common names are: </h3>
+     <br>
+     Flycatcher<br>American beaver<br>C.intestinalis<br>Central bearded dragon<br>Golden-collared manakin<br>Steppe mouse<br>White-throated sparrow<br>Kangaroo rat<br>Gibbon<br>Mouse FVB/NJ<br>Mummichog<br>Algerian mouse<br>Guppy<br>Clown anemonefish<br>Mongolian gerbil<br>Saccharomyces cerevisiae<br>Paramormyrops kingsleyae<br>Lesser Egyptian jerboa<br>Mouse C3H/HeJ<br>Orange clownfish<br>Hedgehog<br>Koala<br>Spiny chromis<br>Blue-crowned manakin<br>American mink<br>Guinea Pig<br>Horse<br>Armadillo<br>Burton's mouthbrooder<br>Crab-eating macaque<br>Japanese quail<br>Budgerigar<br>Naked mole-rat male<br>Ma's night monkey<br>Polar bear<br>Greater bamboo lemur<br>Sailfin molly<br>Mangrove rivulus<br>Great spotted kiwi<br>Argentine black and white tegu<br>Coquerel's sifaka<br>Donkey<br>Brazilian guinea pig<br>Duck<br>Zebrafish<br>Northern American deer mouse<br>Common canary<br>Golden Hamster<br>Channel catfish<br>Western mosquitofish<br>Swamp eel<br>Bengalese finch<br>Cat<br>Platypus<br>Little spotted kiwi<br>Tuatara<br>Shortfin molly<br>Drosophila melanogaster<br>Tasmanian devil<br>Zebra mbuna<br>Mouse WSB/EiJ<br>Ballan wrasse<br>Great Tit<br>Helmeted guineafowl<br>Lamprey<br>Spotted gar<br>Monterrey platyfish<br>Upper Galilee mountains blind mole rat<br>Pika<br>Sloth<br>Chimpanzee<br>Bolivian squirrel monkey<br>Ferret<br>Agassiz's desert tortoise<br>Arctic ground squirrel<br>Mouse PWK/PhJ<br>Japanese medaka HdrR<br>Megabat<br>Abingdon island giant tortoise<br>Black snub-nosed monkey<br>Mexican tetra<br>Lyretail cichlid<br>Mouse CAST/EiJ<br>Lesser hedgehog tenrec<br>Zebra Finch<br>Elephant<br>Capuchin<br>Anole lizard<br>Panda<br>Daurian ground squirrel<br>Pig<br>Mouse<br>Mouse NZO/HlLtJ<br>Spoon-billed sandpiper<br>Wallaby<br>Tiger tail seahorse<br>Cow<br>American bison<br>Mouse A/J<br>Japanese medaka HSOK<br>Bonobo<br>Gorilla<br>Emu<br>Okarito brown kiwi<br>Dog<br>Chilean tinamou<br>Sheepshead minnow<br>Chinese hamster PICR<br>Alpaca<br>Blue tit<br>Zig-zag eel<br>Pig-tailed macaque<br>Ryukyu mouse<br>Angola colobus<br>Sheep<br>Drill<br>Eastern happy<br>Japanese medaka HNI<br>Cod<br>Hagfish<br>Tarsier<br>Indian medaka<br>Sooty mangabey<br>Stickleback<br>Amazon molly<br>Mouse DBA/2J<br>Mouse C57BL/6NJ<br>Dark-eyed junco<br>Chinese hamster CHOK1GS<br>Xenopus<br>Dingo<br>Dolphin<br>Ugandan red Colobus<br>Red-bellied piranha<br>Mouse Lemur<br>Midas cichlid<br>Caenorhabditis elegans<br>Tetraodon<br>Makobe Island cichlid<br>Platyfish<br>Shrew mouse<br>Chinese hamster CriGri<br>Long-tailed chinchilla<br>Hyrax<br>Mouse BALB/cJ<br>Naked mole-rat female<br>Ruff<br>Vervet-AGM<br>Goat<br>Bushbaby<br>Coelacanth<br>Pink-footed goose<br>Macaque<br>Marmoset<br>Turbot<br>Periophthalmus magnuspinnatus<br>Chinese softshell turtle<br>Leopard<br>Degu<br>Climbing perch<br>Tongue sole<br>Mainland tiger snake<br>Mouse CBA/J<br>Tilapia<br>Gelada<br>Prairie vole<br>Fugu<br>Australian saltwater crocodile<br>Rabbit<br>Wild yak<br>Red fox<br>Bicolor damselfish<br>Shrew<br>Mouse AKR/J<br>Greater amberjack<br>Chicken<br>Mouse NOD/ShiLtJ<br>Painted turtle<br>Olive baboon<br>Alpine marmot<br>Orangutan<br>Asian bonytongue<br>Squirrel<br>C.savignyi<br>Golden snub-nosed monkey<br>Northern pike<br>Turkey<br>Mouse LP/J<br>Damara mole rat<br>Tiger<br>Yellowtail amberjack<br>Ocean sunfish<br>American black bear<br>Tree Shrew<br>Opossum<br>Rat<br>Mouse 129S1/SvImJ<br>Human<br>Microbat<br>
+     <br>
+     <h3> The scientific names are: </h3>
+     <br>
+     ficedula albicollis<br>castor canadensis<br>ciona intestinalis<br>pogona vitticeps<br>manacus vitellinus<br>mus spicilegus<br>zonotrichia albicollis<br>dipodomys ordii<br>nomascus leucogenys<br>mus musculus fvbnj<br>fundulus heteroclitus<br>mus spretus<br>poecilia reticulata<br>amphiprion ocellaris<br>meriones unguiculatus<br>saccharomyces cerevisiae<br>paramormyrops kingsleyae<br>jaculus jaculus<br>mus musculus c3hhej<br>amphiprion percula<br>erinaceus europaeus<br>phascolarctos cinereus<br>acanthochromis polyacanthus<br>lepidothrix coronata<br>neovison vison<br>cavia porcellus<br>equus caballus<br>dasypus novemcinctus<br>haplochromis burtoni<br>macaca fascicularis<br>coturnix japonica<br>melopsittacus undulatus<br>heterocephalus glaber male<br>aotus nancymaae<br>ursus maritimus<br>prolemur simus<br>poecilia latipinna<br>kryptolebias marmoratus<br>apteryx haastii<br>salvator merianae<br>propithecus coquereli<br>equus asinus asinus<br>cavia aperea<br>anas platyrhynchos platyrhynchos<br>danio rerio<br>peromyscus maniculatus bairdii<br>serinus canaria<br>mesocricetus auratus<br>ictalurus punctatus<br>gambusia affinis<br>monopterus albus<br>lonchura striata domestica<br>felis catus<br>ornithorhynchus anatinus<br>apteryx owenii<br>sphenodon punctatus<br>poecilia mexicana<br>drosophila melanogaster<br>sarcophilus harrisii<br>maylandia zebra<br>mus musculus wsbeij<br>labrus bergylta<br>parus major<br>numida meleagris<br>petromyzon marinus<br>lepisosteus oculatus<br>xiphophorus couchianus<br>nannospalax galili<br>ochotona princeps<br>choloepus hoffmanni<br>pan troglodytes<br>saimiri boliviensis boliviensis<br>mustela putorius furo<br>gopherus agassizii<br>urocitellus parryii<br>mus musculus pwkphj<br>oryzias latipes<br>pteropus vampyrus<br>chelonoidis abingdonii<br>rhinopithecus bieti<br>astyanax mexicanus<br>neolamprologus brichardi<br>mus musculus casteij<br>echinops telfairi<br>taeniopygia guttata<br>loxodonta africana<br>cebus capucinus<br>anolis carolinensis<br>ailuropoda melanoleuca<br>spermophilus dauricus<br>sus scrofa<br>mus musculus<br>mus musculus nzohlltj<br>calidris pygmaea<br>notamacropus eugenii<br>hippocampus comes<br>bos taurus<br>bison bison bison<br>mus musculus aj<br>oryzias latipes hsok<br>pan paniscus<br>gorilla gorilla<br>dromaius novaehollandiae<br>apteryx rowi<br>canis familiaris<br>nothoprocta perdicaria<br>cyprinodon variegatus<br>cricetulus griseus picr<br>vicugna pacos<br>cyanistes caeruleus<br>mastacembelus armatus<br>macaca nemestrina<br>mus caroli<br>colobus angolensis palliatus<br>ovis aries<br>mandrillus leucophaeus<br>astatotilapia calliptera<br>oryzias latipes hni<br>gadus morhua<br>eptatretus burgeri<br>carlito syrichta<br>oryzias melastigma<br>cercocebus atys<br>gasterosteus aculeatus<br>poecilia formosa<br>mus musculus dba2j<br>mus musculus c57bl6nj<br>junco hyemalis<br>cricetulus griseus chok1gshd<br>xenopus tropicalis<br>canis lupus dingo<br>tursiops truncatus<br>piliocolobus tephrosceles<br>pygocentrus nattereri<br>microcebus murinus<br>amphilophus citrinellus<br>caenorhabditis elegans<br>tetraodon nigroviridis<br>pundamilia nyererei<br>xiphophorus maculatus<br>mus pahari<br>cricetulus griseus crigri<br>chinchilla lanigera<br>procavia capensis<br>mus musculus balbcj<br>heterocephalus glaber female<br>calidris pugnax<br>chlorocebus sabaeus<br>capra hircus<br>otolemur garnettii<br>latimeria chalumnae<br>anser brachyrhynchus<br>macaca mulatta<br>callithrix jacchus<br>scophthalmus maximus<br>periophthalmus magnuspinnatus<br>pelodiscus sinensis<br>panthera pardus<br>octodon degus<br>anabas testudineus<br>cynoglossus semilaevis<br>notechis scutatus<br>mus musculus cbaj<br>oreochromis niloticus<br>theropithecus gelada<br>microtus ochrogaster<br>takifugu rubripes<br>crocodylus porosus<br>oryctolagus cuniculus<br>bos mutus<br>vulpes vulpes<br>stegastes partitus<br>sorex araneus<br>mus musculus akrj<br>seriola dumerili<br>gallus gallus<br>mus musculus nodshiltj<br>chrysemys picta bellii<br>papio anubis<br>marmota marmota marmota<br>pongo abelii<br>scleropages formosus<br>ictidomys tridecemlineatus<br>ciona savignyi<br>rhinopithecus roxellana<br>esox lucius<br>meleagris gallopavo<br>mus musculus lpj<br>fukomys damarensis<br>panthera tigris altaica<br>seriola lalandi dorsalis<br>mola mola<br>ursus americanus<br>tupaia belangeri<br>monodelphis domestica<br>rattus norvegicus<br>mus musculus 129s1svimj<br>homo sapiens<br>myotis lucifugus<br>
+     <br>
+     <a href="/"> Back to the main page </a>
+  </body>
+</html>
+
+--- LIST SPECIES WITH A LIMITER PARAMETER ---
+
+  http://localhost:8000/listSpecies?limit=12
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>LIST OF THE SPECIES</title>
+  </head>
+  <body style="background-color: lightsalmon;">
+    <h1 style="color:midnight;">LIST OF THE SPECIES</h1>
+     <h3> The common names are: </h3>
+     <br>
+     Mouse<br>Human<br>Guinea Pig<br>Mouse CBA/J<br>Midas cichlid<br>Anole lizard<br>Capuchin<br>Ballan wrasse<br>Leopard<br>Fugu<br>Black snub-nosed monkey<br>Zig-zag eel<br>
+     <br>
+     <h3> The scientific names are: </h3>
+     <br>
+     mus musculus<br>homo sapiens<br>cavia porcellus<br>mus musculus cbaj<br>amphilophus citrinellus<br>anolis carolinensis<br>cebus capucinus<br>labrus bergylta<br>panthera pardus<br>takifugu rubripes<br>rhinopithecus bieti<br>mastacembelus armatus<br>
+     <br>
+     <a href="/"> Back to the main page </a>
+  </body>
+</html>
+
+--- LIST SPECIES WITH A NON VALID LIMIT ---
+
+  http://localhost:8000/listSpecies?limit=500
+
+ If the limit are out of the range, negative or zero, the error page is the following:
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>Error 404 - file not found</title>
+</head>
+<body style = "background-color: crimson">
+ <h1>Error 404 - file not found error</h1>
+ <p>You have introduced a limit that is out of range or not valid! </p>
+ <p> You can try again in this link :) </p>
+ <a href="/"> Back to the main page </a>
+</body>
+</html>
+
+  The limit parameter is a number type so we are not allowed to write a name in the main page but from the list species
+  page we are allowed and the return page is a also an error page
+
+  http://localhost:8000/listSpecies?limit=hola
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>Error 404 - file not found</title>
+</head>
+<body style = "background-color: crimson">
+ <h1>Error 404 - file not found error</h1>
+ <p>You have introduced a limit that is out of range or not valid! </p>
+ <p> You can try again in this link :) </p>
+ <a href="/"> Back to the main page </a>
+</body>
+</html>
+
+--- KARYOTYPE INFORMATION ---
+
+  http://localhost:8000/karyotype?specie=dog
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>KARYOTYPE INFORMATION</title>
+  </head>
+  <body style="background-color: lightsalmon;">
+    <h1 style="color:midnight;">KARYOTYPE INFORMATION</h1>
+     <br>
+     <h3> The chromosomes of the specie are: </h3>
+     <br>
+     ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31', '32', '33', '34', '35', '36', '37', '38', 'X', 'MT']
+     <br>
+     <a href="/"> Back to the main page </a>
+  </body>
+</html>
+
+--- KARYOTYPE INFORMATION WITH A NON VALID SPECIE ---
+
+  http://localhost:8000/karyotype?specie=HELLO
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>Error 404 - file not found</title>
+</head>
+<body style = "background-color: crimson">
+ <h1>Error 404 - file not found error</h1>
+ <p>You have introduced a specie, gene or chromosome that is not in the data base!! </p>
+ <p> You can try again in this link :) </p>
+ <a href="/"> Back to the main page </a>
+</body>
+</html>
+
+--- CHROMOSOME LENGTH INFORMATION ---
+
+  http://localhost:8000/chromosomeLength?specie=dog&chromo=2
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>CHROMOSOMES INFORMATION</title>
+  </head>
+  <body style="background-color: lightsalmon;">
+    <h1 style="color:midnight;">CHROMOSOMES INFORMATION</h1>
+     <h3> The length of the introduced chromosome is: </h3>
+     85426708
+     <br>
+     <br>
+     <a href="/"> Back to the main page </a>
+  </body>
+</html>
+
+--- CHROMOSOME LENGTH INFORMATION WITH A NON VALID SPECIE OR CHROMOSOME ---
+
+  http://localhost:8000/chromosomeLength?specie=hello&chromo=2
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>Error 404 - file not found</title>
+</head>
+<body style = "background-color: crimson">
+ <h1>Error 404 - file not found error</h1>
+ <p>You have introduced a specie, gene or chromosome that is not in the data base!! </p>
+ <p> You can try again in this link :) </p>
+ <a href="/"> Back to the main page </a>
+</body>
+</html>
+
+  http://localhost:8000/chromosomeLength?specie=dog&chromo=3000
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>Error 404 - file not found</title>
+</head>
+<body style = "background-color: crimson">
+ <h1>Error 404 - file not found error</h1>
+ <p>You have introduced a specie, gene or chromosome that is not in the data base!! </p>
+ <p> You can try again in this link :) </p>
+ <a href="/"> Back to the main page </a>
+</body>
+</html>
+
