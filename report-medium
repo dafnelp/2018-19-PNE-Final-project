@@ -1,0 +1,186 @@
+TESTING MEDIUM LEVEL
+
+--- GENE SEQUENCE ---
+
+ http://localhost:8000/geneSeq?gene=frat1
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>GEN SEQUENCE</title>
+  </head>
+  <body style="background-color: lightsalmon;">
+    <h1 style="color:midnight;">GENE SEQUENCE</h1>
+     <h3> The sequence of the gen is: </h3>
+     ATTCCGGCTCCCGCGGCTGCAGGCGCGCGGCTAGAGTGCCTGGCGGGCTCCGGCTTCCGCGTCCGCCCCGGCCCCGGTCCAGACTTAGTCTTCAGCTCCGCGCCCGCTCCGCCGCGGCCCACCGCGCCCGCCGGCAGCCGAGCCCCCAGCGACGCCCGCACAGCTCCGGGTGCCCAGACAGGGGGCCATGCCGTGCCGGAGGGAGGAGGAAGAGGAAGCCGGCGAGGAGGCGGAGGGGGAGGAAGAGGAGGAGGACAGCTTCCTCCTACTGCAGCAGTCAGTGGCGCTGGGCAGCTCGGGCGAGGTGGACCGGCTGGTGGCCCAGATCGGCGAGACGCTGCAGCTGGACGCGGCGCAGCACAGCCCGGCCTCGCCGTGCGGGCCCCCGGGGGCGCCGCTGCGGGCCCCGGGGCCCCTGGCTGCGGCGGTGCCGGCGGACAAGGCCAGGTCCCCGGCGGTGCCGCTGCTGCTGCCGCCCGCGTTGGCGGAGACTGTGGGCCCGGCGCCCCCTGGGGTCCTGCGCTGCGCCCTGGGGGACCGCGGCCGCGTGCGGGGCCGCGCTGCGCCCTACTGCGTGGCCGAGCTCGCCACAGGCCCCAGCGCGCTGTCCCCACTGCCCCCTCAGGCCGACCTTGATGGGCCTCCGGGAGCTGGCAAGCAGGGCATCCCGCAGCCGCTGTCGGGTCCGTGCCGGCGAGGATGGCTCCGGGGCGCCGCCGCCTCCCGCCGCCTGCAGCAGCGACGCGGGTCCCAACCAGAAACCCGCACAGGCGACGACGACCCGCACCGGCTTCTGCAGCAGCTAGTGCTCTCTGGAAACCTCATCAAGGAGGCCGTGCGAAGGCTTCATTCGCGACGGCTGCAGTTACGTGCAAAGCTTCCCCAACGCCCGCTCCTGGGACCTCTGTCGGCCCCGGTGCATGAACCCCCTTCGCCTCGCAGCCCTCGCGCGGCCTGCAGTGACCCTGGCGCCTCCGGGAGGGCGCAGCTCAGAACTGGCGACGGCGTTCTTGTGCCTGGCAGCTAACACGCCCGGGGTGGCCACAGCGCCAGCCTCAGACTGGAGGGCAAGGGGTTCCCTTGAGGGCTGCAGTTCTACTCAGGCTGGTGGAGAACTCTGGCTTTTGGAAGCGAGAGTAAAAAGCTAATGACGAGGAACCGAAAAATCGCGAGTGTTTCGCGGGTAACTGGGGTTGAGGGCCAAAATATTTGGAATGAAGGACTTTGGCCCTATTTAAGGCAGATTTTACAGAGCGCACCTCAAACGTACAAGTCAGTAGGACTCCTTATTTGGCGTGACCCGACCTGGCCGCGGAGCCTGCATTTCCTCGCAGCCTCTCAGTGCCCTCCAGCCCCGCGACCATGTGGCCACAATCCACGCTTCTCCGGATCGCGGTGCGCCGGAACCACGGAGGATGATGCCAGTTACTTGCTTTACCTTTTCAGGGCTGGCTCCTGATCCACTTTGGGGGAGGAGAACATGAGTAGATAATTTCAGGGTGCAGCCCAATCTGCCAGACTTAAAAAAACCATCTTGTGTCTTTGGAGGTGCTGCTTAATACCAAACATGCGGTGCCATGAAGGGACCCTTTGGGGGTTGAATAGGAGTTAACCCCTGCGCTCTCTTTGCAACTGTCTCTCTTCTCAGAGTGGTGGGGGAAGGCTGTACGACACGGGTGGGGAAAGGAGGTGGGGGCGGGGAGTATTGAATGGTGGTGGAAGGGTAGAGAGGCGCGGAGTGAACCCCACGCCCTGTCTAAAGTGTATTTTCAGAGCCGGCCCGCCTCTCCTCGGTTCAAGGTCACTGTTTCCTGGGCACGCACTGGGTTGCGGGACAGAGTAGCCAGGTTCTGCCGGTGCTCGGAGAAGAGCGCAGTGTTTTGCAAGTGCTGGAGTCTCCTGAGGACACGCGCGTCGCCGCCACCGCGGGTGTGGGAAAGCGCGGACGTGCTGGGCGGCTGTGCTTCGGTAGGCGACCACCGCCCCTGGCCGCGCTCCGGGCTTTCACGGAAACTCCCGAGACCGGGCCCTGGGTTCCTCCTCTCCTACTCGGCTCTGCAGTCCTACTCAAGCGGGTGGCTCTGGGATCCTGGGGGCCTGGGTTGGGGGCTAGGGAGACGCCATGTGATGGACACTCCAGGGACACACAGCCTAGCACAGCAGCTTATAATGGGCTCTCCGGGGCCATTTGCAATAACAGCTGCAATTCCCTGGATAGACGAGTTGATTTCCTCCCTCTGCCCCTCCCCCAGCCATGCCAGCTGGCCTTTGTAAGTGCAGGAAACCGAGTAGAAAATGTGACCCTCCAAATGGAGAAGCTGCAGGCTTTGCCATTGTGAACCATGGTGAAGTGCTTGGAACATACTGTTCACTCACTCTAAAGGCGCTGAGACTGTGCTGTTGTTCTCGTTTTTATAGTCAATGGCTTGTTCATCATCCAGATGTGGCTACTGACATATCTACACTTCGCACCGGAGTGTCTGGAATTGTGGCTATCCTGATTATAGGATTTTAACTTAACTGAAATGCCTGCTTTGAATAAATGTGTTGGGTTTTTTGTTTGGTTTTATTTTATACTTGCCATCAGTGAAAAAGATGTACAGAACACATTTCTCTGATCTCCATAAACATGAAAACACTTGAAATCTC
+     <br>
+     <br>
+     <a href="/"> Back to the main page </a>
+  </body>
+</html>
+
+--- GENE SEQUENCE WITH A NON VALID GENE ---
+
+  http://localhost:8000/geneSeq?gene=hello
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>Error 404 - file not found</title>
+</head>
+<body style = "background-color: crimson">
+ <h1>Error 404 - file not found error</h1>
+ <p>You have introduced a specie, gene or chromosome that is not in the data base!! </p>
+ <p> You can try again in this link :) </p>
+ <a href="/"> Back to the main page </a>
+</body>
+</html>
+
+--- GENE INFORMATION ---
+
+  http://localhost:8000/geneInfo?gene=frat1
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>GENE INFORMATION</title>
+  </head>
+  <body style="background-color: lightsalmon;">
+    <h1 style="color:midnight;">GENE INFORMATION</h1>
+     <h3> ID of the gene: </h3>
+     ENSG00000165879 <br>
+     <h3> The chromosome where this gene belongs is: </h3>
+     10 <br>
+     <h3> Start of the gen: </h3>
+     97319267 <br>
+     <h3> End of the gen: </h3>
+     97321915 <br>
+     <h3> The length of the gene is: </h3>
+     2648 <br>
+     <br>
+     <a href="/"> Back to the main page </a>
+  </body>
+</html>
+
+--- GENE INFORMATION WITH A NON VALID GENE ---
+
+  http://localhost:8000/geneInfo?gene=hello
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>Error 404 - file not found</title>
+</head>
+<body style = "background-color: crimson">
+ <h1>Error 404 - file not found error</h1>
+ <p>You have introduced a specie, gene or chromosome that is not in the data base!! </p>
+ <p> You can try again in this link :) </p>
+ <a href="/"> Back to the main page </a>
+</body>
+</html>
+
+--- GENE CALCULATIONS ---
+
+  http://localhost:8000/geneCalc?gene=frat1
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>GENE CALCULATIONS</title>
+  </head>
+  <body style="background-color: lightsalmon;">
+    <h1 style="color:midnight;">GENE CALCULATIONS</h1>
+     <h3> The length of the sequence is: </h3>
+     2649 <br>
+     <h3> The percentage of A bases is: </h3>
+     18.0 % <br>
+     <h3> The percentage of C bases is: </h3>
+     30.2 % <br>
+     <h3> The percentage of T bases is: </h3>
+     19.7 % <br>
+     <h3> The percentage of G bases is: </h3>
+     32.0 % <br>
+     <br>
+     <a href="/"> Back to the main page </a>
+  </body>
+</html>
+
+--- GENE CALCULATIONS WITH A NON VALID GENE ---
+
+  http://localhost:8000/geneCalc?gene=hello
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>Error 404 - file not found</title>
+</head>
+<body style = "background-color: crimson">
+ <h1>Error 404 - file not found error</h1>
+ <p>You have introduced a specie, gene or chromosome that is not in the data base!! </p>
+ <p> You can try again in this link :) </p>
+ <a href="/"> Back to the main page </a>
+</body>
+</html>
+
+--- GENE LIST ---
+
+  http://localhost:8000/geneList?chromo=1&start=10&end=30000
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>GENE NAMES</title>
+  </head>
+  <body style="background-color: lightsalmon;">
+    <h1 style="color:midnight;">GENE NAMES</h1>
+     <h3>The id of the genes are: </h3>
+     ENSG00000223972<br>ENSG00000227232<br>ENSG00000278267<br>ENSG00000243485<br> <br>
+     <h3>The names of the genes are: </h3>
+     DDX11L1<br>WASH7P<br>MIR6859-1<br>MIR1302-2HG<br> <br>
+     <br>
+     <a href="/"> Back to the main page </a>
+  </body>
+</html>
+
+--- GENE LIST WITH A NON VALID CHROMOSOME ---
+
+  http://localhost:8000/geneList?chromo=30&start=10&end=30000
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>Error 404 - file not found</title>
+</head>
+<body style = "background-color: crimson">
+ <h1>Error 404 - file not found error</h1>
+ <p>You have introduced a specie, gene or chromosome that is not in the data base!! </p>
+ <p> You can try again in this link :) </p>
+ <a href="/"> Back to the main page </a>
+</body>
+</html>
+
+--- GENE LIST WITH A NON VALID START OR END ---
+
+  http://localhost:8000/geneList?chromo=1&start=5000000&end=30000
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>Error 404 - file not found</title>
+</head>
+<body style = "background-color: crimson">
+ <h1>Error 404 - file not found error</h1>
+ <p>You have introduced a specie, gene or chromosome that is not in the data base!! </p>
+ <p> You can try again in this link :) </p>
+ <a href="/"> Back to the main page </a>
+</body>
+</html>
