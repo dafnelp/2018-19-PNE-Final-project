@@ -1,0 +1,155 @@
+TESTING ADVANCE LEVEL
+
+--- LIST SPECIES ---
+
+  http://localhost:8000/listSpecies?json=1
+
+{"Common name": ["Flycatcher", "American beaver", "C.intestinalis", "Central bearded dragon", "Golden-collared manakin", "Steppe mouse", "White-throated sparrow", "Kangaroo rat", "Gibbon", "Mouse FVB/NJ", "Mummichog", "Algerian mouse", "Guppy", "Clown anemonefish", "Mongolian gerbil", "Saccharomyces cerevisiae", "Paramormyrops kingsleyae", "Lesser Egyptian jerboa", "Mouse C3H/HeJ", "Orange clownfish", "Hedgehog", "Koala", "Spiny chromis", "Blue-crowned manakin", "American mink", "Guinea Pig", "Horse", "Armadillo", "Burton's mouthbrooder", "Crab-eating macaque", "Japanese quail", "Budgerigar", "Naked mole-rat male", "Ma's night monkey", "Polar bear", "Greater bamboo lemur", "Sailfin molly", "Mangrove rivulus", "Great spotted kiwi", "Argentine black and white tegu", "Coquerel's sifaka", "Donkey", "Brazilian guinea pig", "Duck", "Zebrafish", "Northern American deer mouse", "Common canary", "Golden Hamster", "Channel catfish", "Western mosquitofish", "Swamp eel", "Bengalese finch", "Cat", "Platypus", "Little spotted kiwi", "Tuatara", "Shortfin molly", "Drosophila melanogaster", "Tasmanian devil", "Zebra mbuna", "Mouse WSB/EiJ", "Ballan wrasse", "Great Tit", "Helmeted guineafowl", "Lamprey", "Spotted gar", "Monterrey platyfish", "Upper Galilee mountains blind mole rat", "Pika", "Sloth", "Chimpanzee", "Bolivian squirrel monkey", "Ferret", "Agassiz's desert tortoise", "Arctic ground squirrel", "Mouse PWK/PhJ", "Japanese medaka HdrR", "Megabat", "Abingdon island giant tortoise", "Black snub-nosed monkey", "Mexican tetra", "Lyretail cichlid", "Mouse CAST/EiJ", "Lesser hedgehog tenrec", "Zebra Finch", "Elephant", "Capuchin", "Anole lizard", "Panda", "Daurian ground squirrel", "Pig", "Mouse", "Mouse NZO/HlLtJ", "Spoon-billed sandpiper", "Wallaby", "Tiger tail seahorse", "Cow", "American bison", "Mouse A/J", "Japanese medaka HSOK", "Bonobo", "Gorilla", "Emu", "Okarito brown kiwi", "Dog", "Chilean tinamou", "Sheepshead minnow", "Chinese hamster PICR", "Alpaca", "Blue tit", "Zig-zag eel", "Pig-tailed macaque", "Ryukyu mouse", "Angola colobus", "Sheep", "Drill", "Eastern happy", "Japanese medaka HNI", "Cod", "Hagfish", "Tarsier", "Indian medaka", "Sooty mangabey", "Stickleback", "Amazon molly", "Mouse DBA/2J", "Mouse C57BL/6NJ", "Dark-eyed junco", "Chinese hamster CHOK1GS", "Xenopus", "Dingo", "Dolphin", "Ugandan red Colobus", "Red-bellied piranha", "Mouse Lemur", "Midas cichlid", "Caenorhabditis elegans", "Tetraodon", "Makobe Island cichlid", "Platyfish", "Shrew mouse", "Chinese hamster CriGri", "Long-tailed chinchilla", "Hyrax", "Mouse BALB/cJ", "Naked mole-rat female", "Ruff", "Vervet-AGM", "Goat", "Bushbaby", "Coelacanth", "Pink-footed goose", "Macaque", "Marmoset", "Turbot", "Periophthalmus magnuspinnatus", "Chinese softshell turtle", "Leopard", "Degu", "Climbing perch", "Tongue sole", "Mainland tiger snake", "Mouse CBA/J", "Tilapia", "Gelada", "Prairie vole", "Fugu", "Australian saltwater crocodile", "Rabbit", "Wild yak", "Red fox", "Bicolor damselfish", "Shrew", "Mouse AKR/J", "Greater amberjack", "Chicken", "Mouse NOD/ShiLtJ", "Painted turtle", "Olive baboon", "Alpine marmot", "Orangutan", "Asian bonytongue", "Squirrel", "C.savignyi", "Golden snub-nosed monkey", "Northern pike", "Turkey", "Mouse LP/J", "Damara mole rat", "Tiger", "Yellowtail amberjack", "Ocean sunfish", "American black bear", "Tree Shrew", "Opossum", "Rat", "Mouse 129S1/SvImJ", "Human", "Microbat"], "Scientific name": ["ficedula_albicollis", "castor_canadensis", "ciona_intestinalis", "pogona_vitticeps", "manacus_vitellinus", "mus_spicilegus", "zonotrichia_albicollis", "dipodomys_ordii", "nomascus_leucogenys", "mus_musculus_fvbnj", "fundulus_heteroclitus", "mus_spretus", "poecilia_reticulata", "amphiprion_ocellaris", "meriones_unguiculatus", "saccharomyces_cerevisiae", "paramormyrops_kingsleyae", "jaculus_jaculus", "mus_musculus_c3hhej", "amphiprion_percula", "erinaceus_europaeus", "phascolarctos_cinereus", "acanthochromis_polyacanthus", "lepidothrix_coronata", "neovison_vison", "cavia_porcellus", "equus_caballus", "dasypus_novemcinctus", "haplochromis_burtoni", "macaca_fascicularis", "coturnix_japonica", "melopsittacus_undulatus", "heterocephalus_glaber_male", "aotus_nancymaae", "ursus_maritimus", "prolemur_simus", "poecilia_latipinna", "kryptolebias_marmoratus", "apteryx_haastii", "salvator_merianae", "propithecus_coquereli", "equus_asinus_asinus", "cavia_aperea", "anas_platyrhynchos_platyrhynchos", "danio_rerio", "peromyscus_maniculatus_bairdii", "serinus_canaria", "mesocricetus_auratus", "ictalurus_punctatus", "gambusia_affinis", "monopterus_albus", "lonchura_striata_domestica", "felis_catus", "ornithorhynchus_anatinus", "apteryx_owenii", "sphenodon_punctatus", "poecilia_mexicana", "drosophila_melanogaster", "sarcophilus_harrisii", "maylandia_zebra", "mus_musculus_wsbeij", "labrus_bergylta", "parus_major", "numida_meleagris", "petromyzon_marinus", "lepisosteus_oculatus", "xiphophorus_couchianus", "nannospalax_galili", "ochotona_princeps", "choloepus_hoffmanni", "pan_troglodytes", "saimiri_boliviensis_boliviensis", "mustela_putorius_furo", "gopherus_agassizii", "urocitellus_parryii", "mus_musculus_pwkphj", "oryzias_latipes", "pteropus_vampyrus", "chelonoidis_abingdonii", "rhinopithecus_bieti", "astyanax_mexicanus", "neolamprologus_brichardi", "mus_musculus_casteij", "echinops_telfairi", "taeniopygia_guttata", "loxodonta_africana", "cebus_capucinus", "anolis_carolinensis", "ailuropoda_melanoleuca", "spermophilus_dauricus", "sus_scrofa", "mus_musculus", "mus_musculus_nzohlltj", "calidris_pygmaea", "notamacropus_eugenii", "hippocampus_comes", "bos_taurus", "bison_bison_bison", "mus_musculus_aj", "oryzias_latipes_hsok", "pan_paniscus", "gorilla_gorilla", "dromaius_novaehollandiae", "apteryx_rowi", "canis_familiaris", "nothoprocta_perdicaria", "cyprinodon_variegatus", "cricetulus_griseus_picr", "vicugna_pacos", "cyanistes_caeruleus", "mastacembelus_armatus", "macaca_nemestrina", "mus_caroli", "colobus_angolensis_palliatus", "ovis_aries", "mandrillus_leucophaeus", "astatotilapia_calliptera", "oryzias_latipes_hni", "gadus_morhua", "eptatretus_burgeri", "carlito_syrichta", "oryzias_melastigma", "cercocebus_atys", "gasterosteus_aculeatus", "poecilia_formosa", "mus_musculus_dba2j", "mus_musculus_c57bl6nj", "junco_hyemalis", "cricetulus_griseus_chok1gshd", "xenopus_tropicalis", "canis_lupus_dingo", "tursiops_truncatus", "piliocolobus_tephrosceles", "pygocentrus_nattereri", "microcebus_murinus", "amphilophus_citrinellus", "caenorhabditis_elegans", "tetraodon_nigroviridis", "pundamilia_nyererei", "xiphophorus_maculatus", "mus_pahari", "cricetulus_griseus_crigri", "chinchilla_lanigera", "procavia_capensis", "mus_musculus_balbcj", "heterocephalus_glaber_female", "calidris_pugnax", "chlorocebus_sabaeus", "capra_hircus", "otolemur_garnettii", "latimeria_chalumnae", "anser_brachyrhynchus", "macaca_mulatta", "callithrix_jacchus", "scophthalmus_maximus", "periophthalmus_magnuspinnatus", "pelodiscus_sinensis", "panthera_pardus", "octodon_degus", "anabas_testudineus", "cynoglossus_semilaevis", "notechis_scutatus", "mus_musculus_cbaj", "oreochromis_niloticus", "theropithecus_gelada", "microtus_ochrogaster", "takifugu_rubripes", "crocodylus_porosus", "oryctolagus_cuniculus", "bos_mutus", "vulpes_vulpes", "stegastes_partitus", "sorex_araneus", "mus_musculus_akrj", "seriola_dumerili", "gallus_gallus", "mus_musculus_nodshiltj", "chrysemys_picta_bellii", "papio_anubis", "marmota_marmota_marmota", "pongo_abelii", "scleropages_formosus", "ictidomys_tridecemlineatus", "ciona_savignyi", "rhinopithecus_roxellana", "esox_lucius", "meleagris_gallopavo", "mus_musculus_lpj", "fukomys_damarensis", "panthera_tigris_altaica", "seriola_lalandi_dorsalis", "mola_mola", "ursus_americanus", "tupaia_belangeri", "monodelphis_domestica", "rattus_norvegicus", "mus_musculus_129s1svimj", "homo_sapiens", "myotis_lucifugus"]}
+
+--- LIST SPECIES WITH A LIMIT PARAMETER ---
+
+  http://localhost:8000/listSpecies?limit=5&json=1
+
+{"Common name": ["Flycatcher", "American beaver", "C.intestinalis", "Central bearded dragon", "Golden-collared manakin"], "Scientific name": ["ficedula_albicollis", "castor_canadensis", "ciona_intestinalis", "pogona_vitticeps", "manacus_vitellinus"]}
+
+--- LIST SPECIES WITH A NON VALID LIMIT PARAMETER ---
+
+  http://localhost:8000/listSpecies?limit=-10&json=1
+
+In case that the limit is out of the range, zero, negative or a string, the error page will be the following:
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>Error 404 - file not found</title>
+</head>
+<body style = "background-color: crimson">
+ <h1>Error 404 - file not found error</h1>
+ <p>You have introduced a limit that is out of range or not valid! </p>
+ <p> You can try again in this link :) </p>
+ <a href="/"> Back to the main page </a>
+</body>
+</html>
+
+--- KARYOTYPE INFORMATION ---
+
+  http://localhost:8000/karyotype?specie=homo+sapiens&json=1
+
+{"chromosomes": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "X", "Y", "MT"]}
+
+--- KARYOTYPE INFORMATION WITH A NON VALID SPECIE ---
+
+  http://localhost:8000/karyotype?specie=hello&json=1
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>Error 404 - file not found</title>
+</head>
+<body style = "background-color: crimson">
+ <h1>Error 404 - file not found error</h1>
+ <p>You have introduced a specie, gene or chromosome that is not in the data base!! </p>
+ <p> You can try again in this link :) </p>
+ <a href="/"> Back to the main page </a>
+</body>
+</html>
+
+--- CHROMOSOME LENGTH INFORMATION ---
+
+  http://localhost:8000/chromosomeLength?specie=homo+sapiens&chromo=4&json=1
+
+{"length": "190214555"}
+
+--- CHROMOSOME LENGTH INFORMATION WITH A NON VALID SPECIE OR CHROMOSOME---
+
+In both cases it will return the same error page
+
+  http://localhost:8000/chromosomeLength?specie=dog&chromo=hello&json=1
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>Error 404 - file not found</title>
+</head>
+<body style = "background-color: crimson">
+ <h1>Error 404 - file not found error</h1>
+ <p>You have introduced a specie, gene or chromosome that is not in the data base!! </p>
+ <p> You can try again in this link :) </p>
+ <a href="/"> Back to the main page </a>
+</body>
+</html>
+
+--- GENE SEQUENCE ---
+
+  http://localhost:8000/geneSeq?gene=frat1&json=1
+
+{"sequence": "ATTCCGGCTCCCGCGGCTGCAGGCGCGCGGCTAGAGTGCCTGGCGGGCTCCGGCTTCCGCGTCCGCCCCGGCCCCGGTCCAGACTTAGTCTTCAGCTCCGCGCCCGCTCCGCCGCGGCCCACCGCGCCCGCCGGCAGCCGAGCCCCCAGCGACGCCCGCACAGCTCCGGGTGCCCAGACAGGGGGCCATGCCGTGCCGGAGGGAGGAGGAAGAGGAAGCCGGCGAGGAGGCGGAGGGGGAGGAAGAGGAGGAGGACAGCTTCCTCCTACTGCAGCAGTCAGTGGCGCTGGGCAGCTCGGGCGAGGTGGACCGGCTGGTGGCCCAGATCGGCGAGACGCTGCAGCTGGACGCGGCGCAGCACAGCCCGGCCTCGCCGTGCGGGCCCCCGGGGGCGCCGCTGCGGGCCCCGGGGCCCCTGGCTGCGGCGGTGCCGGCGGACAAGGCCAGGTCCCCGGCGGTGCCGCTGCTGCTGCCGCCCGCGTTGGCGGAGACTGTGGGCCCGGCGCCCCCTGGGGTCCTGCGCTGCGCCCTGGGGGACCGCGGCCGCGTGCGGGGCCGCGCTGCGCCCTACTGCGTGGCCGAGCTCGCCACAGGCCCCAGCGCGCTGTCCCCACTGCCCCCTCAGGCCGACCTTGATGGGCCTCCGGGAGCTGGCAAGCAGGGCATCCCGCAGCCGCTGTCGGGTCCGTGCCGGCGAGGATGGCTCCGGGGCGCCGCCGCCTCCCGCCGCCTGCAGCAGCGACGCGGGTCCCAACCAGAAACCCGCACAGGCGACGACGACCCGCACCGGCTTCTGCAGCAGCTAGTGCTCTCTGGAAACCTCATCAAGGAGGCCGTGCGAAGGCTTCATTCGCGACGGCTGCAGTTACGTGCAAAGCTTCCCCAACGCCCGCTCCTGGGACCTCTGTCGGCCCCGGTGCATGAACCCCCTTCGCCTCGCAGCCCTCGCGCGGCCTGCAGTGACCCTGGCGCCTCCGGGAGGGCGCAGCTCAGAACTGGCGACGGCGTTCTTGTGCCTGGCAGCTAACACGCCCGGGGTGGCCACAGCGCCAGCCTCAGACTGGAGGGCAAGGGGTTCCCTTGAGGGCTGCAGTTCTACTCAGGCTGGTGGAGAACTCTGGCTTTTGGAAGCGAGAGTAAAAAGCTAATGACGAGGAACCGAAAAATCGCGAGTGTTTCGCGGGTAACTGGGGTTGAGGGCCAAAATATTTGGAATGAAGGACTTTGGCCCTATTTAAGGCAGATTTTACAGAGCGCACCTCAAACGTACAAGTCAGTAGGACTCCTTATTTGGCGTGACCCGACCTGGCCGCGGAGCCTGCATTTCCTCGCAGCCTCTCAGTGCCCTCCAGCCCCGCGACCATGTGGCCACAATCCACGCTTCTCCGGATCGCGGTGCGCCGGAACCACGGAGGATGATGCCAGTTACTTGCTTTACCTTTTCAGGGCTGGCTCCTGATCCACTTTGGGGGAGGAGAACATGAGTAGATAATTTCAGGGTGCAGCCCAATCTGCCAGACTTAAAAAAACCATCTTGTGTCTTTGGAGGTGCTGCTTAATACCAAACATGCGGTGCCATGAAGGGACCCTTTGGGGGTTGAATAGGAGTTAACCCCTGCGCTCTCTTTGCAACTGTCTCTCTTCTCAGAGTGGTGGGGGAAGGCTGTACGACACGGGTGGGGAAAGGAGGTGGGGGCGGGGAGTATTGAATGGTGGTGGAAGGGTAGAGAGGCGCGGAGTGAACCCCACGCCCTGTCTAAAGTGTATTTTCAGAGCCGGCCCGCCTCTCCTCGGTTCAAGGTCACTGTTTCCTGGGCACGCACTGGGTTGCGGGACAGAGTAGCCAGGTTCTGCCGGTGCTCGGAGAAGAGCGCAGTGTTTTGCAAGTGCTGGAGTCTCCTGAGGACACGCGCGTCGCCGCCACCGCGGGTGTGGGAAAGCGCGGACGTGCTGGGCGGCTGTGCTTCGGTAGGCGACCACCGCCCCTGGCCGCGCTCCGGGCTTTCACGGAAACTCCCGAGACCGGGCCCTGGGTTCCTCCTCTCCTACTCGGCTCTGCAGTCCTACTCAAGCGGGTGGCTCTGGGATCCTGGGGGCCTGGGTTGGGGGCTAGGGAGACGCCATGTGATGGACACTCCAGGGACACACAGCCTAGCACAGCAGCTTATAATGGGCTCTCCGGGGCCATTTGCAATAACAGCTGCAATTCCCTGGATAGACGAGTTGATTTCCTCCCTCTGCCCCTCCCCCAGCCATGCCAGCTGGCCTTTGTAAGTGCAGGAAACCGAGTAGAAAATGTGACCCTCCAAATGGAGAAGCTGCAGGCTTTGCCATTGTGAACCATGGTGAAGTGCTTGGAACATACTGTTCACTCACTCTAAAGGCGCTGAGACTGTGCTGTTGTTCTCGTTTTTATAGTCAATGGCTTGTTCATCATCCAGATGTGGCTACTGACATATCTACACTTCGCACCGGAGTGTCTGGAATTGTGGCTATCCTGATTATAGGATTTTAACTTAACTGAAATGCCTGCTTTGAATAAATGTGTTGGGTTTTTTGTTTGGTTTTATTTTATACTTGCCATCAGTGAAAAAGATGTACAGAACACATTTCTCTGATCTCCATAAACATGAAAACACTTGAAATCTC"}
+
+--- GENE SEQUENCE WITH A NON VALID SEQUENCE ---
+
+  http://localhost:8000/geneSeq?gene=hello&json=1
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>Error 404 - file not found</title>
+</head>
+<body style = "background-color: crimson">
+ <h1>Error 404 - file not found error</h1>
+ <p>You have introduced a specie, gene or chromosome that is not in the data base!! </p>
+ <p> You can try again in this link :) </p>
+ <a href="/"> Back to the main page </a>
+</body>
+</html>
+
+--- GENE INFORMATION ---
+
+  http://localhost:8000/geneInfo?gene=frat1&json=1
+
+{"id": "ENSG00000165879", "chromosome": "10", "start": 97319267, "end": 97321915, "length": 2648}
+
+--- GENE INFORMATION WITH A NON VALID GENE ---
+
+  http://localhost:8000/geneInfo?gene=hello&json=1
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>Error 404 - file not found</title>
+</head>
+<body style = "background-color: crimson">
+ <h1>Error 404 - file not found error</h1>
+ <p>You have introduced a specie, gene or chromosome that is not in the data base!! </p>
+ <p> You can try again in this link :) </p>
+ <a href="/"> Back to the main page </a>
+</body>
+</html>
+
+--- GENE CALCULATIONS ---
+
+  http://localhost:8000/geneCalc?gene=frat1&json=1
+
+{"length": 2649, "A percentage ": "18.0 %", "T percentage": "19.7 %", "G percentage": "32.0 %", "C percentage": "30.2 %"}
+
+--- GENE CALCULATIONS WITH A NON VALID GENE ---
+
+  http://localhost:8000/geneCalc?gene=hello&json=1
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>Error 404 - file not found</title>
+</head>
+<body style = "background-color: crimson">
+ <h1>Error 404 - file not found error</h1>
+ <p>You have introduced a specie, gene or chromosome that is not in the data base!! </p>
+ <p> You can try again in this link :) </p>
+ <a href="/"> Back to the main page </a>
+</body>
+</html>
