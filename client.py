@@ -50,7 +50,7 @@ response("/chromosomeLength?specie=dog&chromo=5")
 # Return the sequence of a introduced gene
 response("/geneSeq?gene=frat1")
 
-# Return the information od a introduced gene
+# Return the information of a introduced gene
 response("/geneInfo?gene=WASH7P")
 
 # Return some calculations (length and percentage of the bases) of a introduced gene

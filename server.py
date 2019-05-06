@@ -30,7 +30,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
         resource = comp_request[0]
 
         def connection(ENDPOINT):
-            """ FUNCTION that will stablish the connection to the ensembl
+            """ FUNCTION that will establish the connection to the ensembl
             data base and will return some info, that will be used later
             PARAMETERS: ENDPOINT --- names given to the resources provided by the server """
 
@@ -154,7 +154,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             # introduced by the client (ex.FRAT1)
 
             if "/homology/symbol/human/" in ENDPOINT:
-                # With this connection we obtain the id of the introduced gen
+                # With this connection we obtain the id of the introduced gene
                 # WE ARE WORKING ONLY WITH HUMAN GENES
                 id_gen = species["data"][0]["id"]
 
@@ -174,7 +174,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 id = species["id"]
                 chromo_part = species["seq_region_name"]
                 # The length of the gene is obtained subtracting the finish and the start position
-                length_gene = species["end"] - species["start"]
+                length_gene = species["end"] - species["start"] + 1
 
                 # Creating a list wit the information of the gene
                 info = [id, chromo_part, start, end, length_gene]
@@ -252,7 +252,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             self.send_response(200)  # --- status line - everything Ok
 
             # Define the content-type header:
-            # In our case application/jso
+            # In our case application/json
             self.send_header('Content-Type', 'application/json')
             self.send_header('Content-Length', len(str.encode(content)))
 
@@ -277,6 +277,7 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
             if "json=1" in self.path:
                 # Presence of a limit parameter
                 if "limit" in self.path:
+
                     req = comp_request[1].split('&')
                     # Number of species to show
                     limit = req[0][6:]
@@ -428,15 +429,15 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
         elif resource == "/karyotype":
             # In that case the server creates a json object
             if "json=1" in self.path:
-                req = comp_request[1].split('&')
-                # Specie introduced by the client
-                specie = req[0][7:]
-
-                # Replace the + sign when the specie has two names by _
-                # that is the way that appears in ensembl data base
-                specie = specie.replace("+", "_").lower()
-
                 try:
+                    req = comp_request[1].split('&')
+                    # Specie introduced by the client
+                    specie = req[0][7:]
+
+                    # Replace the + sign when the specie has two names by _
+                    # that is the way that appears in ensembl data base
+                    specie = specie.replace("+", "_").lower()
+
                     # Stablish the connection with the data base and
                     # return the info about the karyotype
                     karyotype_specie = connection("/info/assembly/" + specie)
@@ -452,18 +453,22 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 except KeyError:
                     process_error("error-key.html")
 
+                except IndexError:
+                    process_error("error.html")
+
             # HTML response
             else:
-                # Specie introduced by the client
-                specie = comp_request[1][7:]
-
-                # Replace the + sign when the specie has two names by _
-                # that is the way that appears in ensembl data base
-                specie = specie.replace("+", "_").lower()
-
-                # Stablish the connection with the data base and
-                # return the info about the karyotype
                 try:
+                    # Specie introduced by the client
+                    specie = comp_request[1][7:]
+
+                    # Replace the + sign when the specie has two names by _
+                    # that is the way that appears in ensembl data base
+                    specie = specie.replace("+", "_").lower()
+
+                    # Stablish the connection with the data base and
+                    # return the info about the karyotype
+
                     karyotype_specie = connection("/info/assembly/" + specie)  # The endpoint needs a parameter (specie)
 
                     # The specie exists in the dat abase but does not have asociated any chromosome
@@ -502,36 +507,39 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 except KeyError:
                     process_error("error-key.html")
 
-        elif resource == "/chromosomeLength":
-            req = comp_request[1].split('&')
-            # Specie introduced by the client
-            specie = req[0][7:]
-            # Chromosome introduced by the client
-            chromo = req[1][7:]
-            # Replace the + sign when the specie has two names by _
-            # that is the way that appears in ensembl data base
-            specie = specie.replace("+", "_").lower()
+                except IndexError:
+                    process_error("error.html")
 
-            # In that case the server creates a json object
-            if "json=1" in self.path:
-                # Establish the connection with the data base and
-                # return the info about the chromosome
-                try:
+        elif resource == "/chromosomeLength":
+            try:
+                req = comp_request[1].split('&')
+                # Specie introduced by the client
+                specie = req[0][7:]
+                # Chromosome introduced by the client
+                chromo = req[1][7:]
+                # Replace the + sign when the specie has two names by _
+                # that is the way that appears in ensembl data base
+                specie = specie.replace("+", "_").lower()
+
+                # In that case the server creates a json object
+                if "json=1" in self.path:
+                    # Establish the connection with the data base and
+                    # return the info about the chromosome
+
                     chromosome_len = connection("/info/assembly/" + specie)
+
                     # The specie exists in the dat abase but does not have associated any chromosome
                     if chromosome_len == "":
                         process_error("error-key.html")
                     else:
                         # Creating a json object with the requested data
                         process_json(json.dumps({"length": chromosome_len}))
-                except KeyError:
-                    process_error("error-key.html")
 
-            # HTML response
-            else:
-                # Establish the connection with the data base and
-                # return the info about the chromosomes
-                try:
+                # HTML response
+                else:
+                    # Establish the connection with the data base and
+                    # return the info about the chromosomes
+
                     chromosome_len = connection("/info/assembly/" + specie)  # This endpoint needs a parameter (specie)
 
                     # The specie exists in the dat abase but does not have associated any chromosome
@@ -567,20 +575,24 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                         process_info("chromosome.html")
 
                 # In case that the specie does not exist in the data base
-                except KeyError:
-                    process_error("error-key.html")
+            except KeyError:
+                process_error("error-key.html")
+
+            except IndexError:
+                process_error("error.html")
 
         elif resource == "/geneSeq":
             # In that case the server creates a json object
             if "json=1" in self.path:
-                req = comp_request[1].split('&')
-                # Generic name introduced by the client
-                gene = req[0][5:]
-                gene = gene.upper()
-
-                # Establish the connection with the data base and first
-                # retrieve the id of the introduced gen and then the sequence of the gen
                 try:
+                    req = comp_request[1].split('&')
+                    # Generic name introduced by the client
+                    gene = req[0][5:]
+                    gene = gene.upper()
+
+                    # Establish the connection with the data base and first
+                    # retrieve the id of the introduced gen and then the sequence of the gen
+
                     gen_id = connection("/homology/symbol/human/" + gene)  # This endpoint needs a parameter (gene)
                     sequence = connection("/sequence/id/" + gen_id)  # This endpoint needs a parameter (gen_id)
                     # Creating a json object with the requested data
@@ -589,14 +601,18 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 except KeyError:
                     process_error("error-key.html")
 
+                except IndexError:
+                    process_error("error.html")
+
             # HTML response
             else:
-                gene = comp_request[1][5:]
-                gene = gene.upper()
-
-                # Establish the connection with the data base and first
-                # retrieve the id of the introduced gen and then the sequence of the gen
                 try:
+                    gene = comp_request[1][5:]
+                    gene = gene.upper()
+
+                    # Establish the connection with the data base and first
+                    # retrieve the id of the introduced gen and then the sequence of the gen
+
                     gen_id = connection("/homology/symbol/human/" + gene)  # This endpoint needs a parameter (gene)
                     sequence = connection("/sequence/id/" + gen_id)  # This endpoint needs a parameter (gen_id)
 
@@ -631,17 +647,21 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 except KeyError:
                     process_error("error-key.html")
 
+                except IndexError:
+                    process_error("error.html")
+
         elif resource == "/geneInfo":
             # In that case the server creates a json object
             if "json=1" in self.path:
-                req = comp_request[1].split('&')
-                # Generic name introduced by the client
-                gene = req[0][5:]
-                gene = gene.upper()
-
-                # Establish the connection with the data base and first
-                # retrieve the id of the introduced gen and then the information of the gene
                 try:
+                    req = comp_request[1].split('&')
+                    # Generic name introduced by the client
+                    gene = req[0][5:]
+                    gene = gene.upper()
+
+                    # Establish the connection with the data base and first
+                    # retrieve the id of the introduced gen and then the information of the gene
+
                     gen_id = connection("/homology/symbol/human/" + gene)  # This endpoint needs a parameter (gene)
                     info_gene = connection("lookup/id/" + gen_id)  # This endpoint needs a parameter (gen_id)
                     # Requested data
@@ -656,15 +676,19 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 except KeyError:
                     process_error("error-key.html")
 
+                except IndexError:
+                    process_error("error.html")
+
             # HTML response
             else:
-                # Generic name introduced by the client
-                gene = comp_request[1][5:]
-                gene = gene.upper()
-
-                # Establish the connection with the data base and first
-                # retrieve the id of the introduced gen and then the information of the gene
                 try:
+                    # Generic name introduced by the client
+                    gene = comp_request[1][5:]
+                    gene = gene.upper()
+
+                    # Establish the connection with the data base and first
+                    # retrieve the id of the introduced gen and then the information of the gene
+
                     gen_id = connection("/homology/symbol/human/" + gene)  # This endpoint needs a parameter (gene)
                     info_gene = connection("lookup/id/" + gen_id)  # This endpoint needs a parameter (gen_id)
 
@@ -713,16 +737,20 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 except KeyError:
                     process_error("error-key.html")
 
+                except IndexError:
+                    process_error("error.html")
+
         elif resource == "/geneCalc":
             # In that case the server creates a json object
             if "json=1" in self.path:
-                req = comp_request[1].split('&')
-                # Generic name introduced by the client
-                gene = req[0][5:]
-                gene = gene.upper()
-                # Establish the connection with the data base and first
-                # retrieve the id of the introduced gen and then the sequence of the gene
                 try:
+                    req = comp_request[1].split('&')
+                    # Generic name introduced by the client
+                    gene = req[0][5:]
+                    gene = gene.upper()
+                    # Establish the connection with the data base and first
+                    # retrieve the id of the introduced gen and then the sequence of the gene
+
                     gen_id = connection("/homology/symbol/human/" + gene)  # This endpoint needs a parameter (gene)
                     sequence = connection("/sequence/id/" + gen_id)  # This endpoint needs a parameter (gen_id)
 
@@ -740,15 +768,19 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
 
                 except KeyError:
                     process_error("error-key.html")
+
+                except IndexError:
+                    process_error("error.html")
             # HTML response
             else:
-                # Generic name introduced by the client
-                gene = comp_request[1][5:]
-                gene = gene.upper()
-
-                # Establish the connection with the data base and first
-                # retrieve the id of the introduced gen and then the sequence of the gene
                 try:
+                    # Generic name introduced by the client
+                    gene = comp_request[1][5:]
+                    gene = gene.upper()
+
+                    # Establish the connection with the data base and first
+                    # retrieve the id of the introduced gen and then the sequence of the gene
+
                     gen_id = connection("/homology/symbol/human/" + gene)  # This endpoint needs a parameter (gene)
                     sequence = connection("/sequence/id/" + gen_id)  # This endpoint needs a parameter (gen_id)
 
@@ -799,21 +831,25 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                 except KeyError:
                     process_error("error-key.html")
 
-        elif resource == "/geneList":
-            # In that case the request message have different parts
-            req = comp_request[1].split('&')
-            # Chromosome introduced by the client
-            chromo = str(req[0][7:])
-            # Start position of the chromosome
-            start = str(req[1][6:])
-            # End position of the chromosome
-            end = str(req[2][4:])
+                except IndexError:
+                    process_error("error.html")
 
-            # In that case the server creates a json object
-            if "json=1" in self.path:
-                # Establish the connection with the data base and retrieve the
-                # genes of the selected part of the  chromosome
-                try:
+        elif resource == "/geneList":
+            try:
+                # In that case the request message have different parts
+                req = comp_request[1].split('&')
+                # Chromosome introduced by the client
+                chromo = str(req[0][7:])
+                # Start position of the chromosome
+                start = str(req[1][6:])
+                # End position of the chromosome
+                end = str(req[2][4:])
+
+                # In that case the server creates a json object
+                if "json=1" in self.path:
+                    # Establish the connection with the data base and retrieve the
+                    # genes of the selected part of the  chromosome
+
                     genes_id = connection("overlap/region/human/" + chromo + ":" + start + "-" + end + "?feature=gene")
                     # Requested info
                     gene_id = genes_id[0]
@@ -826,14 +862,14 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                         # Creating a json object with the requested data
                         process_json(json.dumps({"id": gene_id, "name": gene_name}))
 
-                except KeyError:
-                    process_error("error-key.html")
 
-            # HTML response
-            else:
-                # Establish the connection with the data base and retrieve the
-                # genes of the selected part of the  chromosome
-                try:
+
+
+                # HTML response
+                else:
+                    # Establish the connection with the data base and retrieve the
+                    # genes of the selected part of the  chromosome
+
                     # This endpoint needs three parameters (chromo, start, end)
                     # We also have to introduced the type of feature to retrieve,
                     # in our case gene, nevertheless multiple values are accepted
@@ -887,8 +923,11 @@ class TestHandler(http.server.BaseHTTPRequestHandler):
                         # Calling the function to open another page
                         process_info("genes-chromo.html")
 
-                except KeyError:
-                    process_error("error-key.html")
+            except KeyError:
+                process_error("error-key.html")
+
+            except IndexError:
+                process_error("error.html")
 
         # Error page
         else:
