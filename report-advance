@@ -153,3 +153,47 @@ In both cases it will return the same error page
  <a href="/"> Back to the main page </a>
 </body>
 </html>
+
+--- GENE NAMES SELECTING THE CHROMOSOME, START AND END ---
+
+  http://localhost:8000/geneList?chromo=1&start=10&end=300000&json=1
+
+{"id": ["ENSG00000223972", "ENSG00000227232", "ENSG00000278267", "ENSG00000243485", "ENSG00000284332", "ENSG00000237613", "ENSG00000268020", "ENSG00000240361", "ENSG00000186092", "ENSG00000238009", "ENSG00000239945", "ENSG00000233750", "ENSG00000268903", "ENSG00000269981", "ENSG00000239906", "ENSG00000241860", "ENSG00000222623", "ENSG00000241599", "ENSG00000279928", "ENSG00000279457", "ENSG00000273874", "ENSG00000228463"], "name": ["DDX11L1", "WASH7P", "MIR6859-1", "MIR1302-2HG", "MIR1302-2", "FAM138A", "OR4G4P", "OR4G11P", "OR4F5", "AL627309.1", "AL627309.3", "CICP27", "AL627309.6", "AL627309.7", "AL627309.2", "AL627309.5", "RNU6-1100P", "AL627309.4", "FO538757.1", "WASH9P", "MIR6859-2", "AP006222.1"]}
+
+--- GENE NAMES WITH A NON VALID CHROMOSOME, START OR END ---
+
+If the chromosome, start and end are not valid, the error page will be the following:
+
+  http://localhost:8000/geneList?chromo=10000&start=10&end=300000&json=1
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>Error 404 - file not found</title>
+</head>
+<body style = "background-color: crimson">
+ <h1>Error 404 - file not found error</h1>
+ <p>You have introduced a specie, gene or chromosome that is not in the data base!! </p>
+ <p> You can try again in this link :) </p>
+ <a href="/"> Back to the main page </a>
+</body>
+</html>
+
+In the case that the chromosome, start or end are valid but they do not have any associated gene, the error page will be:
+
+  http://localhost:8000/geneList?chromo=1&start=0&end=300&json=1
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>Error 404 - file not found</title>
+</head>
+<body style = "background-color: crimson">
+ <h1>Error 404 - file not found error</h1>
+ <p>A generic error have happened!</p>
+ <p>You can try again in this link! :)</p>
+ <a href="/"> Back to the main page </a>
+</body>
+</html>
